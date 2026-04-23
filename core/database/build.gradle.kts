@@ -8,6 +8,10 @@ android {
     namespace = "com.example.weatherforecast.core.database"
 }
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 dependencies {
     implementation(projects.core.common)
     implementation(projects.core.model)
