@@ -1,8 +1,14 @@
 plugins {
-    alias(libs.plugins.weatherapp.jvm.library)
+    alias(libs.plugins.weatherapp.android.library)
+    alias(libs.plugins.weatherapp.android.hilt)
+}
+
+android {
+    namespace = "com.example.weatherforecast.core.common"
 }
 
 dependencies {
-    implementation(projects.core.model)
-    implementation(libs.kotlinx.coroutines.core)
+    api(projects.core.model)
+    api(libs.kotlinx.coroutines.core)
+    api(libs.javax.inject)
 }

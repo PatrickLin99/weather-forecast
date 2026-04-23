@@ -114,8 +114,8 @@ See `docs/MODULE_STRUCTURE.md` for detailed package structure of each module.
 ### PR strategy
 
 | PR | Scope | Emulator result | Status |
-|----|-------|-----------------|--------|
-| 01 | Scaffolding: build-logic, version catalog, empty module skeleton | Hello Compose (AS default) | ⏳ |
+|----|-------|-----------------|-------|
+| 01 | Scaffolding: build-logic, version catalog, empty module skeleton | Hello Compose (AS default) | ✅ |
 | 02 | Core foundations: model, common, network, database, datastore, designsystem | Hello Compose (no UI change) | ⏳ |
 | 03 | First vertical: domain, data, feature:weather (Taipei hardcoded, no location yet) | First real weather screen | ⏳ |
 | 04 | feature:citylist + search + city switching | Switch cities | ⏳ |
@@ -125,10 +125,11 @@ See `docs/MODULE_STRUCTURE.md` for detailed package structure of each module.
 
 ### Current PR
 
-**PR #01 — Scaffolding**
-- Branch: `feat/01-scaffolding`
-- Scope: build-logic, version catalog, empty module skeleton
-- Spec: see `docs/prs/PR01_SCAFFOLDING.md`
+**PR #02 — Core Foundations**
+- Branch: `feat/02-core-foundations`
+- Scope: 6 core modules (model, common, network, database, datastore, designsystem)
+- Spec: see `docs/prs/PR02_CORE_FOUNDATIONS.md`
+- Execution: Single-pass (no per-Step pauses). Final verification via `./gradlew build`.
 
 ### Definition of Done (per PR)
 
