@@ -168,6 +168,14 @@ When I ask you to work on this project:
    (Repository, UseCase, ViewModel), including tests is welcome. PR #07 serves as the
    catch-all to ensure comprehensive test coverage by the end.
 
+8. **Flag version changes before applying.** If a build error or compatibility
+   issue requires upgrading a dependency version in `libs.versions.toml`,
+   stop and confirm with the user before proceeding. Include: the current
+   version, target version, reason for upgrade, and any breaking change
+   implications. Exceptions: patch-level bumps (x.y.Z) within the same
+   minor may be applied directly if needed to fix build errors, with a
+   brief note.
+
 ## References
 
 - [Now in Android](https://github.com/android/nowinandroid) — primary reference for modularization and convention plugins

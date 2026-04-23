@@ -1243,9 +1243,12 @@ After DoD is fully checked and PR 02 merged:
 
 ---
 
-## Post-PR Retrospective (fill after merge)
+## Post-PR Retrospective
 
-- Total time taken:
-- Biggest friction point:
-- Any deviation from this spec, and why:
-- Anything to change in PR 03 spec based on this experience:
+- **Total time taken:** [大約幾小時]
+- **Biggest friction point:** Room 2.6 / KSP 2.x incompatibility — Claude CLI detected and resolved by upgrading to Room 2.7.1.
+- **Deviation from this spec:** Package root uses `com.example.weatherforecast` instead of `com.opennet.weatherforecast` (conscious decision during review).
+- **Lessons for PR 03:**
+   - Single-pass execution mode worked well for templated work like core modules.
+   - When Claude CLI encounters a version conflict, it makes reasonable auto-upgrades; consider adding a rule in CLAUDE.md to flag version changes explicitly.
+   - No per-Step checkpoint needed this time; same approach likely fine for PR 04 and later.
