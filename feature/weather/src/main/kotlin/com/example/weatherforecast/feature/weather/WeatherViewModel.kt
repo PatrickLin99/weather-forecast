@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherforecast.core.common.error.AppError
 import com.example.weatherforecast.core.common.result.onFailure
+import com.example.weatherforecast.core.common.result.onSuccess
 import com.example.weatherforecast.core.domain.usecase.ObserveSelectedCityWeatherUseCase
 import com.example.weatherforecast.core.domain.usecase.RefreshWeatherUseCase
 import com.example.weatherforecast.core.domain.usecase.ResolveInitialCityUseCase
+import com.example.weatherforecast.core.model.City
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,21 +27,24 @@ class WeatherViewModel @Inject constructor(
     private val refreshWeather: RefreshWeatherUseCase,
 ) : ViewModel() {
 
-    private val _transientMessage = MutableStateFlow<String?>(null)
+    private val _lastRefreshError = MutableStateFlow<AppError?>(null)
 
     val uiState: StateFlow<WeatherUiState> = combine(
         observeSelectedCityWeather(),
-        _transientMessage,
-    ) { (city, weather), message ->
-        val state: WeatherUiState = if (weather != null) {
-            WeatherUiState.Success(
+        _lastRefreshError,
+    ) { (city, weather), lastError ->
+        val state: WeatherUiState = when {
+            weather != null -> WeatherUiState.Success(
                 weather = weather,
                 city = city,
-                isStale = message != null,
-                transientMessage = message,
+                isStale = lastError != null,
+                transientMessage = lastError?.toUserMessage(),
             )
-        } else {
-            WeatherUiState.Loading
+            lastError != null -> WeatherUiState.Error(
+                error = lastError,
+                canRetry = true,
+            )
+            else -> WeatherUiState.Loading
         }
         state
     }
@@ -51,31 +56,31 @@ class WeatherViewModel @Inject constructor(
         )
 
     init {
-        viewModelScope.launch {
-            try {
-                val initialCity = resolveInitialCity()
-                refreshWeather(initialCity).onFailure { handleRefreshFailure(it) }
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Throwable) {
-                _transientMessage.value = AppError.Unexpected(e).toUserMessage()
+        launchRefresh { resolveInitialCity() }
+    }
+
+    fun onRefresh() {
+        launchRefresh {
+            when (val state = uiState.value) {
+                is WeatherUiState.Success -> state.city
+                else -> resolveInitialCity()
             }
         }
     }
 
-    fun onRefresh() {
+    private fun launchRefresh(cityProvider: suspend () -> City) {
         viewModelScope.launch {
-            val currentCity = (uiState.value as? WeatherUiState.Success)?.city ?: return@launch
-            refreshWeather(currentCity).onFailure { handleRefreshFailure(it) }
+            try {
+                val city = cityProvider()
+                refreshWeather(city)
+                    .onSuccess { _lastRefreshError.value = null }
+                    .onFailure { _lastRefreshError.value = it }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                _lastRefreshError.value = AppError.Unexpected(e)
+            }
         }
-    }
-
-    fun onDismissTransientMessage() {
-        _transientMessage.value = null
-    }
-
-    private fun handleRefreshFailure(error: AppError) {
-        _transientMessage.value = error.toUserMessage()
     }
 }
 
