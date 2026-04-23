@@ -9,7 +9,7 @@ import com.example.weatherforecast.core.network.mapper.toDomain
 import com.example.weatherforecast.core.network.util.apiCall
 import javax.inject.Inject
 
-internal class CityRemoteDataSource @Inject constructor(
+class CityRemoteDataSource @Inject internal constructor(
     private val api: OpenMeteoGeocodingApi,
 ) {
     suspend fun searchCities(query: String): Result<List<City>, AppError> =

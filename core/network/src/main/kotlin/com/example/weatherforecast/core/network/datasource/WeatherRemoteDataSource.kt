@@ -10,7 +10,7 @@ import com.example.weatherforecast.core.network.mapper.toDomain
 import com.example.weatherforecast.core.network.util.apiCall
 import javax.inject.Inject
 
-internal class WeatherRemoteDataSource @Inject constructor(
+class WeatherRemoteDataSource @Inject internal constructor(
     private val api: OpenMeteoForecastApi,
 ) {
     suspend fun fetchWeather(
