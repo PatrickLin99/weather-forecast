@@ -125,10 +125,10 @@ See `docs/MODULE_STRUCTURE.md` for detailed package structure of each module.
 
 ### Current PR
 
-> **Not started yet.** Update this section when starting a new PR with:
-> - Current PR number and branch name
-> - Scope summary
-> - Link to the detailed spec at `docs/prs/PRxx_*.md`
+**PR #01 — Scaffolding**
+- Branch: `feat/01-scaffolding`
+- Scope: build-logic, version catalog, empty module skeleton
+- Spec: see `docs/prs/PR01_SCAFFOLDING.md`
 
 ### Definition of Done (per PR)
 
