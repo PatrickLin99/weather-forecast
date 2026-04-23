@@ -1,0 +1,261 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "de1cddb822c9f7d3885bbedc0ab68ed1",
+    "entities": [
+      {
+        "tableName": "cities",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `country` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `isCurrentLocation` INTEGER NOT NULL, `addedAt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "country",
+            "columnName": "country",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isCurrentLocation",
+            "columnName": "isCurrentLocation",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addedAt",
+            "columnName": "addedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "current_weather",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cityId` TEXT NOT NULL, `temperature` REAL NOT NULL, `feelsLike` REAL NOT NULL, `humidity` INTEGER NOT NULL, `windSpeed` REAL NOT NULL, `conditionCode` TEXT NOT NULL, `unit` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`cityId`), FOREIGN KEY(`cityId`) REFERENCES `cities`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "cityId",
+            "columnName": "cityId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "temperature",
+            "columnName": "temperature",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "feelsLike",
+            "columnName": "feelsLike",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "humidity",
+            "columnName": "humidity",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "windSpeed",
+            "columnName": "windSpeed",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "conditionCode",
+            "columnName": "conditionCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "unit",
+            "columnName": "unit",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "cityId"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "cities",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "cityId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "daily_forecasts",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cityId` TEXT NOT NULL, `date` TEXT NOT NULL, `tempMin` REAL NOT NULL, `tempMax` REAL NOT NULL, `conditionCode` TEXT NOT NULL, `sunriseEpoch` INTEGER, `sunsetEpoch` INTEGER, `precipitationProbability` INTEGER, PRIMARY KEY(`cityId`, `date`), FOREIGN KEY(`cityId`) REFERENCES `cities`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "cityId",
+            "columnName": "cityId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tempMin",
+            "columnName": "tempMin",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tempMax",
+            "columnName": "tempMax",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "conditionCode",
+            "columnName": "conditionCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sunriseEpoch",
+            "columnName": "sunriseEpoch",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "sunsetEpoch",
+            "columnName": "sunsetEpoch",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "precipitationProbability",
+            "columnName": "precipitationProbability",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "cityId",
+            "date"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "cities",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "cityId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "hourly_forecasts",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cityId` TEXT NOT NULL, `time` INTEGER NOT NULL, `temperature` REAL NOT NULL, `conditionCode` TEXT NOT NULL, PRIMARY KEY(`cityId`, `time`), FOREIGN KEY(`cityId`) REFERENCES `cities`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "cityId",
+            "columnName": "cityId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "time",
+            "columnName": "time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "temperature",
+            "columnName": "temperature",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "conditionCode",
+            "columnName": "conditionCode",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "cityId",
+            "time"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "cities",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "cityId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'de1cddb822c9f7d3885bbedc0ab68ed1')"
+    ]
+  }
+}
