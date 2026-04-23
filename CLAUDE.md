@@ -116,8 +116,8 @@ See `docs/MODULE_STRUCTURE.md` for detailed package structure of each module.
 | PR | Scope | Emulator result | Status |
 |----|-------|-----------------|-------|
 | 01 | Scaffolding: build-logic, version catalog, empty module skeleton | Hello Compose (AS default) | ✅ |
-| 02 | Core foundations: model, common, network, database, datastore, designsystem | Hello Compose (no UI change) | ⏳ |
-| 03 | First vertical: domain, data, feature:weather (Taipei hardcoded, no location yet) | First real weather screen | ⏳ |
+| 02 | Core foundations: model, common, network, database, datastore, designsystem | Hello Compose (no UI change) | ✅ |
+| 03 | First vertical: domain, data, feature:weather (Taipei hardcoded, no location yet) | First real weather screen | 🚧 |
 | 04 | feature:citylist + search + city switching | Switch cities | ⏳ |
 | 05 | core:location + geocoding integration | Auto-detect current location | ⏳ |
 | 06 | Polish: pull-to-refresh, °C/°F toggle, refined error UX | Full UX | ⏳ |
@@ -125,11 +125,11 @@ See `docs/MODULE_STRUCTURE.md` for detailed package structure of each module.
 
 ### Current PR
 
-**PR #02 — Core Foundations**
-- Branch: `feat/02-core-foundations`
-- Scope: 6 core modules (model, common, network, database, datastore, designsystem)
-- Spec: see `docs/prs/PR02_CORE_FOUNDATIONS.md`
-- Execution: Single-pass (no per-Step pauses). Final verification via `./gradlew build`.
+**PR #03 — Weather Vertical Slice**
+- Branch: `feat/03-weather-vertical`
+- Scope: `:core:domain`, `:core:data`, `:feature:weather`, and `:app` integration. First end-to-end vertical slice showing Taipei weather.
+- Spec: see `docs/prs/PR03_WEATHER_VERTICAL.md`
+- Execution: 3-stage with checkpoints (Domain+Data / Feature UI / App integration).
 
 ### Definition of Done (per PR)
 
