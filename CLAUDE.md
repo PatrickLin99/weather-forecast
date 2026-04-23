@@ -176,6 +176,20 @@ When I ask you to work on this project:
    minor may be applied directly if needed to fix build errors, with a
    brief note.
 
+## Technical Debt
+
+Known deferred improvements are tracked in `docs/TECH_DEBT.md`.
+
+Before starting each PR, scan `TECH_DEBT.md` for items whose **target resolution** matches the current PR. If found:
+- Include the refactor within the PR (if scope allows)
+- Use a separate commit: `refactor: resolve TD-NNN <short description>`
+- Update the entry's status to `Resolved` with PR number and date
+
+When introducing new deferred decisions during a PR:
+- Add a new entry to `TECH_DEBT.md` with a stable ID (next `TD-NNN`)
+- Explain *why* it's deferred (not just *what*)
+- Identify target resolution PR
+
 ## References
 
 - [Now in Android](https://github.com/android/nowinandroid) — primary reference for modularization and convention plugins
