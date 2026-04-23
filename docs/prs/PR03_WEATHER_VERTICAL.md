@@ -1287,3 +1287,13 @@ Fill in after merge:
    - Missing import in a code snippet
    - Method name mismatch between spec and actual PR 02 output
    - Unclear decision point
+
+## Post-PR Retrospective
+
+- **Total time taken:** [約幾小時]
+- **Which stage took longest?:** [Stage 1 / 2 / 3，通常是 Stage 3 整合]
+- **Hilt version upgrade:** Hilt 2.55 → 2.59.2 to support AGP 9. Decided based on Claude CLI's investigation of Hilt release notes and Now in Android alignment.
+- **Bug discovered mid-Stage 3:** WeatherViewModel's combine chain lacked an Error path when cache was empty AND refresh failed. Symptom: cold-start offline stuck in Loading indefinitely. Fix: added `_lastRefreshError` state and three-way branch (Success / Error / Loading). Spec will be updated to reflect this pattern for future PRs.
+- **TD-001 logged:** Data sources are concrete class + internal constructor. Deferred to PR 07.
+- **flatMapLatest pattern:** worked first try with the spec's final version.
+- **DefaultCity FK handling:** pre-emptive saveCity in ResolveInitialCityUseCase worked as designed, no FK violation observed.
