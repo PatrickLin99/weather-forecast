@@ -24,6 +24,9 @@ retrofitKotlinxSerializationConverter = "1.0.0"
 # Coroutines
 kotlinxCoroutines = "1.9.0"
 
+# Date/Time
+kotlinxDatetime = "0.6.1"
+
 # Persistence
 room = "2.6.1"
 datastore = "1.1.1"
@@ -81,6 +84,12 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 
 # ---- Coroutines ----
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+
+# ---- Date/Time ----
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
+
+# ---- Misc ----
+javax-inject = { module = "javax.inject:javax.inject", version = "1" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutines" }
 
