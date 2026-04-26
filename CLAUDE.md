@@ -117,7 +117,7 @@ See `docs/MODULE_STRUCTURE.md` for detailed package structure of each module.
 |----|-------|-----------------|-------|
 | 01 | Scaffolding: build-logic, version catalog, empty module skeleton | Hello Compose (AS default) | ✅ |
 | 02 | Core foundations: model, common, network, database, datastore, designsystem | Hello Compose (no UI change) | ✅ |
-| 03 | First vertical: domain, data, feature:weather (Taipei hardcoded, no location yet) | First real weather screen | 🚧 |
+| 03 | First vertical: domain, data, feature:weather (Taipei hardcoded, no location yet) | First real weather screen | ✅ |
 | 04 | feature:citylist + search + city switching | Switch cities | ⏳ |
 | 05 | core:location + geocoding integration | Auto-detect current location | ⏳ |
 | 06 | Polish: pull-to-refresh, °C/°F toggle, refined error UX | Full UX | ⏳ |
