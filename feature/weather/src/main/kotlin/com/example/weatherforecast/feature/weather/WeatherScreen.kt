@@ -1,5 +1,6 @@
 package com.example.weatherforecast.feature.weather
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,7 +56,10 @@ internal fun WeatherContent(
             TopAppBar(
                 title = {
                     when (uiState) {
-                        is WeatherUiState.Success -> Text(uiState.city.name)
+                        is WeatherUiState.Success -> Text(
+                            text = uiState.city.name,
+                            modifier = Modifier.clickable { onNavigateToCityList() },
+                        )
                         else -> Text("Weather")
                     }
                 },
