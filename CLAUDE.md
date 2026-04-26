@@ -118,17 +118,17 @@ See `docs/MODULE_STRUCTURE.md` for detailed package structure of each module.
 | 01 | Scaffolding: build-logic, version catalog, empty module skeleton | Hello Compose (AS default) | ✅ |
 | 02 | Core foundations: model, common, network, database, datastore, designsystem | Hello Compose (no UI change) | ✅ |
 | 03 | First vertical: domain, data, feature:weather (Taipei hardcoded, no location yet) | First real weather screen | ✅ |
-| 04 | feature:citylist + search + city switching | Switch cities | ⏳ |
+| 04 | feature:citylist + search + city switching | Switch cities | ✅ |
 | 05 | core:location + geocoding integration | Auto-detect current location | ⏳ |
 | 06 | Polish: pull-to-refresh, °C/°F toggle, refined error UX | Full UX | ⏳ |
 | 07 | Tests + README + AI_USAGE.md | Final deliverable | ⏳ |
 
 ### Current PR
 
-**PR #03 — Weather Vertical Slice**
-- Branch: `feat/03-weather-vertical`
-- Scope: `:core:domain`, `:core:data`, `:feature:weather`, and `:app` integration. First end-to-end vertical slice showing Taipei weather.
-- Spec: see `docs/prs/PR03_WEATHER_VERTICAL.md`
+**PR #04 — City List and Search** ✅ merged
+- Branch: `feat/04-citylist`
+- Scope: `:feature:citylist` (search + saved list + delete), three new UseCases (`SearchCitiesUseCase`, `SelectCityUseCase`, `DeleteCityUseCase` with selected-city fallback), `searchCities` added to `CityRepository`. Uncovered + fixed a PR03 gap: weather refresh now triggers on every `selectedCityId` change via the new `ObserveSelectedCityUseCase` collected in `WeatherViewModel.init`.
+- Spec: see `docs/prs/PR04_CITYLIST.md`
 - Execution: 3-stage with checkpoints (Domain+Data / Feature UI / App integration).
 
 ### Definition of Done (per PR)

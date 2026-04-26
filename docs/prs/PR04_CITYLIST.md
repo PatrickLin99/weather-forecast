@@ -949,13 +949,16 @@ grep -rn "import com.example.weatherforecast.feature.citylist" feature/weather/s
 
 ---
 
-## Post-PR Retrospective (fill after merge)
+## Post-PR Retrospective
 
-- Total time taken:
-- Which stage took longest?
-- Search debounce — did the `debounce` + `flatMapLatest` pattern work first try?
-- Edge case "delete selected city" — did it surface a bug, or did `DeleteCityUseCase` handle it cleanly?
-- Anything to update in `docs/CODING_CONVENTIONS.md` based on what we learned?
+- **Which stage took longest?** Stage 3 — not the integration itself (trivial), but the bug surfaced during emulator scenario 6.
+- **Search debounce:** `debounce(300ms)` upstream of `flatMapLatest`, with the blank-query early-return inside the inner `flow {}`, worked first try. The orthogonal `data class` UiState (vs. sealed-interface) also worked first try — saved list, search state, and selected-id stay independent on the same screen, exactly as the spec argued.
+- **Edge case "delete selected city":** `DeleteCityUseCase` handled the DataStore + Room fallback cleanly. The user-visible failure was *not* in the delete path — it was in the **re-add Tokyo** prep step before the delete (see next bullet).
+- **Spec misjudged that observing `selectedCityId` would self-heal weather data; observe ≠ refresh.** PR03's `WeatherViewModel.init { launchRefresh { resolveInitialCity() } }` only fires once per process. `observeSelectedCityWeather` re-emits for new ids, but `observeWeather` only reads from Room — so a freshly-saved Tokyo with no cached row stuck the screen on `Loading`. Fixed by adding `ObserveSelectedCityUseCase` and collecting it in `WeatherViewModel.init` to trigger `refreshWeather()` on every city change.
+- **TD-002 logged:** `getCityById` suspend overhead in observe chain — defer; revisit in PR05/06 if `selectedCityId` starts emitting at high frequency.
+- **Architectural insight:** "when to refresh" is a weather-domain concern, not a city-UseCase concern. Keeping the refresh trigger in `WeatherViewModel` preserves layering and prepares for PR05 (location auto-detect) and PR06 (unit toggle) which will reuse the same observe-and-refresh pattern. Briefly considered injecting `WeatherRepository` into `SelectCityUseCase` / `DeleteCityUseCase` — rejected because it would couple the city-domain to the weather-domain and force the same coupling on every future caller.
+- **Spec divergence flagged in Stage 1:** PR02 left `CityRemoteDataSource` mapping empty geocoding results to `Failure(CityNotFound)`, but PR04 spec §A1 + scenario 7 (nonsense query → "No matches") require `Success(emptyList)`. Aligned the data source to the spec's expected shape.
+- **`docs/CODING_CONVENTIONS.md` updates worth considering:** document the **observe-and-refresh** pattern as a first-class ViewModel idiom for any future Room-backed screen, since this is the second time the gap could have bitten us silently.
 
 ---
 
