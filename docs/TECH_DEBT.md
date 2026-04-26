@@ -125,6 +125,45 @@ Selection changes are user-driven — typically one or two per session — so th
 
 ---
 
+### TD-003: Replace deprecated `Icons.Filled.HelpOutline` with `AutoMirrored` variant
+
+**Introduced**: PR 02 (compile warning surfaced during PR 04 final build)
+**Status**: Open
+**Severity**: Low
+
+**What**
+
+`core/designsystem/component/WeatherIcon.kt` uses `Icons.Filled.HelpOutline` for the `WeatherCondition.UNKNOWN` case. Material Icons deprecated this in favor of `Icons.AutoMirrored.Filled.HelpOutline`, which mirrors correctly under RTL locales.
+
+**Affected**
+
+- `:core:designsystem/component/WeatherIcon.kt`
+
+**Why deferred**
+
+Out of PR 04's scope. Build still succeeds (warning, not error). RTL is not a current requirement.
+
+**Impact of deferral**
+
+- Functionality: unaffected
+- Build: warning only, no error
+- Risk: deprecated API may be removed in future Material Icons versions
+- Localization: RTL locales would render the help icon non-mirrored, but RTL is not a delivery requirement
+
+**Target resolution**: PR 06 (polish) — natural fit when refining UI.
+
+**Proposed change (when resolving)**
+
+```kotlin
+// In WeatherIcon.kt
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
+
+// In the when block:
+WeatherCondition.UNKNOWN -> Icons.AutoMirrored.Filled.HelpOutline
+```
+
+---
+
 ## Resolved Items
 
 _(Nothing resolved yet.)_
@@ -137,3 +176,4 @@ _(Nothing resolved yet.)_
 |----|-------|----------|--------|--------|
 | TD-001 | Data source classes should be interfaces | Low | PR 07 | Open |
 | TD-002 | `getCityById` suspend overhead in observe chain | Low | PR 05/06 (re-evaluate) | Open |
+| TD-003 | Replace deprecated `HelpOutline` with `AutoMirrored` | Low | PR 06 | Open |
