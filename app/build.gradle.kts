@@ -20,6 +20,7 @@ android {
 
 dependencies {
     implementation(projects.feature.weather)
+    implementation(projects.feature.citylist)
     implementation(projects.core.data)
     implementation(projects.core.designsystem)
     implementation(projects.core.common)
