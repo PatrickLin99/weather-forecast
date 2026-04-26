@@ -96,6 +96,35 @@ internal abstract class DataSourceBindModule {
 
 ---
 
+### TD-002: `getCityById` suspend overhead inside observe chain
+
+**Introduced**: PR 04 (Stage 3 fix)
+**Status**: Open
+**Severity**: Low
+
+**What**
+
+`ObserveSelectedCityUseCase` calls `cityRepository.getCityById(id)` inside `Flow.map { ... }` every time `selectedCityId` emits. `getCityById` is a `suspend` function backed by a single Room query, so each emission incurs a Room read on the IO dispatcher.
+
+**Affected**
+
+- `:core:domain/usecase/ObserveSelectedCityUseCase.kt`
+- Indirectly: `:core:domain/usecase/ObserveSelectedCityWeatherUseCase.kt` (does the same lookup in its `flatMapLatest` block)
+
+**Why deferred**
+
+Selection changes are user-driven — typically one or two per session — so the per-emit cost is negligible at PR 04 scope. Switching to a Flow-based query (`cityDao.observeById(id): Flow<City?>`) would require a new DAO method and a refactor across both UseCases. Not justified yet.
+
+**Impact of deferral**
+
+- Functionality: unaffected
+- Performance: imperceptible at current usage; would matter only if selection started changing programmatically at high frequency (none planned)
+- Testability: unchanged
+
+**Target resolution**: re-evaluate in PR 05 or PR 06. If location auto-detect (PR 05) starts re-emitting `selectedCityId` on every location update, or unit toggle (PR 06) ends up reusing this UseCase with churning inputs, promote to a Flow-based DAO query.
+
+---
+
 ## Resolved Items
 
 _(Nothing resolved yet.)_
@@ -107,3 +136,4 @@ _(Nothing resolved yet.)_
 | ID | Title | Severity | Target | Status |
 |----|-------|----------|--------|--------|
 | TD-001 | Data source classes should be interfaces | Low | PR 07 | Open |
+| TD-002 | `getCityById` suspend overhead in observe chain | Low | PR 05/06 (re-evaluate) | Open |
