@@ -13,4 +13,11 @@ interface CityRepository {
     suspend fun saveCity(city: City): Result<Unit, AppError>
 
     suspend fun deleteCity(cityId: String): Result<Unit, AppError>
+
+    /**
+     * Searches the geocoding API for cities matching the query.
+     * Caller is responsible for debouncing.
+     * Empty query MUST return Success(emptyList) without hitting the network.
+     */
+    suspend fun searchCities(query: String): Result<List<City>, AppError>
 }
