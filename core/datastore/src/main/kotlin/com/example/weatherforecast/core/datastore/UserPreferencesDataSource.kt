@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
 import java.io.IOException
 import javax.inject.Inject
 
-internal class UserPreferencesDataSource @Inject constructor(
+class UserPreferencesDataSource @Inject internal constructor(
     private val dataStore: DataStore<Preferences>,
 ) {
     val selectedCityId: Flow<String?> = dataStore.data

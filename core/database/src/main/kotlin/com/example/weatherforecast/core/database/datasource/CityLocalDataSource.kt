@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-internal class CityLocalDataSource @Inject constructor(
+class CityLocalDataSource @Inject internal constructor(
     private val cityDao: CityDao,
 ) {
     fun observeCities(): Flow<List<City>> =

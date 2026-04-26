@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
-internal class WeatherLocalDataSource @Inject constructor(
+class WeatherLocalDataSource @Inject internal constructor(
     private val weatherDao: WeatherDao,
 ) {
     fun observeWeather(cityId: String, unit: TemperatureUnit): Flow<Weather?> =

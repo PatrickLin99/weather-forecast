@@ -7,11 +7,9 @@ import org.gradle.kotlin.dsl.getByType
 class AndroidHiltConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            // com.google.dagger.hilt.android Gradle plugin is incompatible with AGP 9.1.x
-            // (it looks up the removed BaseExtension). Apply only KSP + dependencies here.
-            // The Hilt Gradle plugin will be re-enabled in a future PR once a compatible
-            // version (2.56+) is available.
+            // Hilt 2.59+ supports AGP 9 and Gradle 9.1+.
             pluginManager.apply("com.google.devtools.ksp")
+            pluginManager.apply("dagger.hilt.android.plugin")
 
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
