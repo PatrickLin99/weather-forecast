@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.weatherforecast.core.common.error.AppError
 import com.example.weatherforecast.core.common.result.onFailure
 import com.example.weatherforecast.core.common.result.onSuccess
+import com.example.weatherforecast.core.domain.usecase.ObserveSelectedCityUseCase
 import com.example.weatherforecast.core.domain.usecase.ObserveSelectedCityWeatherUseCase
 import com.example.weatherforecast.core.domain.usecase.RefreshWeatherUseCase
 import com.example.weatherforecast.core.domain.usecase.ResolveInitialCityUseCase
@@ -24,6 +25,7 @@ import javax.inject.Inject
 class WeatherViewModel @Inject constructor(
     private val resolveInitialCity: ResolveInitialCityUseCase,
     observeSelectedCityWeather: ObserveSelectedCityWeatherUseCase,
+    private val observeSelectedCity: ObserveSelectedCityUseCase,
     private val refreshWeather: RefreshWeatherUseCase,
 ) : ViewModel() {
 
@@ -56,7 +58,15 @@ class WeatherViewModel @Inject constructor(
         )
 
     init {
-        launchRefresh { resolveInitialCity() }
+        viewModelScope.launch {
+            // Bootstrap: on fresh install, persist DefaultCity.TAIPEI and set it as selected
+            // so the selectedCityId Flow has something to emit.
+            resolveInitialCity()
+            // Auto-refresh whenever the selected city changes (also fires on the first emit).
+            observeSelectedCity().collect { city ->
+                refresh(city)
+            }
+        }
     }
 
     fun onRefresh() {
@@ -71,16 +81,19 @@ class WeatherViewModel @Inject constructor(
     private fun launchRefresh(cityProvider: suspend () -> City) {
         viewModelScope.launch {
             try {
-                val city = cityProvider()
-                refreshWeather(city)
-                    .onSuccess { _lastRefreshError.value = null }
-                    .onFailure { _lastRefreshError.value = it }
+                refresh(cityProvider())
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Throwable) {
                 _lastRefreshError.value = AppError.Unexpected(e)
             }
         }
+    }
+
+    private suspend fun refresh(city: City) {
+        refreshWeather(city)
+            .onSuccess { _lastRefreshError.value = null }
+            .onFailure { _lastRefreshError.value = it }
     }
 }
 
