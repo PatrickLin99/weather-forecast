@@ -9,9 +9,7 @@ import com.example.weatherforecast.core.model.Weather
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -25,15 +23,14 @@ class ObserveSelectedCityWeatherUseCase @Inject constructor(
         return combine(
             userPreferencesRepository.selectedCityId,
             userPreferencesRepository.temperatureUnit,
-        ) { cityId, unit -> cityId to unit }
-            .flatMapLatest { (cityId, unit) ->
-                flow {
-                    val city = cityId?.let { cityRepository.getCityById(it) } ?: DefaultCity.TAIPEI
-                    emitAll(
-                        weatherRepository.observeWeather(city.id, unit)
-                            .map { weather -> city to weather },
-                    )
-                }
+            cityRepository.observeSavedCities(),
+        ) { cityId, unit, cities ->
+            val city = cityId?.let { id -> cities.firstOrNull { it.id == id } } ?: DefaultCity.TAIPEI
+            city to unit
+        }
+            .flatMapLatest { (city, unit) ->
+                weatherRepository.observeWeather(city.id, unit)
+                    .map { weather -> city to weather }
             }
     }
 }
