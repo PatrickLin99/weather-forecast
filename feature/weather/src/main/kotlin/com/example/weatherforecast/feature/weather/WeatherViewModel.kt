@@ -30,6 +30,23 @@ class WeatherViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _lastRefreshError = MutableStateFlow<AppError?>(null)
+    private val _hasLocationPermission = MutableStateFlow(false)
+    private val _isLocationEnabled = MutableStateFlow(true)
+
+    val locationPromptState: StateFlow<LocationPromptState> = combine(
+        _hasLocationPermission,
+        _isLocationEnabled,
+    ) { hasPerm, locOn ->
+        when {
+            !hasPerm -> LocationPromptState.NeedsPermission
+            !locOn -> LocationPromptState.LocationDisabled
+            else -> LocationPromptState.Hidden
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = LocationPromptState.NeedsPermission,
+    )
 
     val uiState: StateFlow<WeatherUiState> = combine(
         observeSelectedCityWeather(),
@@ -59,12 +76,33 @@ class WeatherViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            // PR05 Stage 1 stopgap: useLocation=false keeps the build green.
-            // Stage 2 wires _hasLocationPermission and re-runs resolve when permission flips.
-            resolveInitialCity(useLocation = false)
-            // Auto-refresh whenever the selected city changes (also fires on the first emit).
+            // Bootstrap with the permission value at this moment. The Composable's
+            // first composition pushes the actual state via onLocationPermissionChanged,
+            // which re-runs resolve when permission is granted.
+            resolveInitialCity(useLocation = _hasLocationPermission.value)
             observeSelectedCity().collect { city ->
                 refresh(city)
+            }
+        }
+    }
+
+    fun onLocationPermissionChanged(granted: Boolean, locationEnabled: Boolean) {
+        _hasLocationPermission.value = granted
+        _isLocationEnabled.value = locationEnabled
+        if (granted && locationEnabled) {
+            viewModelScope.launch {
+                try {
+                    val city = resolveInitialCity(useLocation = true)
+                    // observeSelectedCity uses distinctUntilChanged on cityId; when re-detection
+                    // returns the same "current_location" id (Scenario 6), the auto-refresh
+                    // chain doesn't fire. Refresh here so the just-detected city's weather
+                    // shows up after re-detection without an app restart.
+                    refresh(city)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Throwable) {
+                    _lastRefreshError.value = AppError.Unexpected(e)
+                }
             }
         }
     }
@@ -73,7 +111,7 @@ class WeatherViewModel @Inject constructor(
         launchRefresh {
             when (val state = uiState.value) {
                 is WeatherUiState.Success -> state.city
-                else -> resolveInitialCity(useLocation = false)
+                else -> resolveInitialCity(useLocation = _hasLocationPermission.value)
             }
         }
     }
