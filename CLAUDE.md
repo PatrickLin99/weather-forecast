@@ -125,11 +125,11 @@ See `docs/MODULE_STRUCTURE.md` for detailed package structure of each module.
 
 ### Current PR
 
-**PR #06 — Polish: Refresh, Units, Error UX, Visual Refinement** ✅ done
-- Branch: `feat/06-polish`
-- Scope: pull-to-refresh, °C/°F toggle, strings.xml extraction, AppError→Composable mapping, TD-003 fix (AutoMirrored HelpOutline), MyLocation icon on current_location CityList rows, inline SearchErrorBanner replacing full-screen error.
-- Spec: see `docs/prs/PR06_POLISH.md`
-- Execution: 2-stage with emulator checkpoint between stages.
+**PR #07 — Tests, Documentation, and Delivery** ⏳ in progress
+- Branch: `feat/07-tests-and-delivery`
+- Scope: TD-001 refactor (data source interfaces), critical-path tests, README.md, AI_USAGE.md, final regression.
+- Spec: see `docs/prs/PR07_TESTS_AND_DELIVERY.md`
+- Execution: 3-stage with checkpoints.
 
 ### Definition of Done (per PR)
 

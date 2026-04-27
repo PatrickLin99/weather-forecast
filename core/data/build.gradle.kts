@@ -15,4 +15,9 @@ dependencies {
     implementation(projects.core.location)
     implementation(projects.core.model)
     implementation(projects.core.common)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
