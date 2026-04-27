@@ -96,6 +96,74 @@ internal abstract class DataSourceBindModule {
 
 ---
 
+### TD-002: `getCityById` suspend overhead inside observe chain
+
+**Introduced**: PR 04 (Stage 3 fix)
+**Status**: Open
+**Severity**: Low
+
+**What**
+
+`ObserveSelectedCityUseCase` calls `cityRepository.getCityById(id)` inside `Flow.map { ... }` every time `selectedCityId` emits. `getCityById` is a `suspend` function backed by a single Room query, so each emission incurs a Room read on the IO dispatcher.
+
+**Affected**
+
+- `:core:domain/usecase/ObserveSelectedCityUseCase.kt`
+- Indirectly: `:core:domain/usecase/ObserveSelectedCityWeatherUseCase.kt` (does the same lookup in its `flatMapLatest` block)
+
+**Why deferred**
+
+Selection changes are user-driven — typically one or two per session — so the per-emit cost is negligible at PR 04 scope. Switching to a Flow-based query (`cityDao.observeById(id): Flow<City?>`) would require a new DAO method and a refactor across both UseCases. Not justified yet.
+
+**Impact of deferral**
+
+- Functionality: unaffected
+- Performance: imperceptible at current usage; would matter only if selection started changing programmatically at high frequency (none planned)
+- Testability: unchanged
+
+**Target resolution**: re-evaluate in PR 05 or PR 06. If location auto-detect (PR 05) starts re-emitting `selectedCityId` on every location update, or unit toggle (PR 06) ends up reusing this UseCase with churning inputs, promote to a Flow-based DAO query.
+
+---
+
+### TD-003: Replace deprecated `Icons.Filled.HelpOutline` with `AutoMirrored` variant
+
+**Introduced**: PR 02 (compile warning surfaced during PR 04 final build)
+**Status**: Open
+**Severity**: Low
+
+**What**
+
+`core/designsystem/component/WeatherIcon.kt` uses `Icons.Filled.HelpOutline` for the `WeatherCondition.UNKNOWN` case. Material Icons deprecated this in favor of `Icons.AutoMirrored.Filled.HelpOutline`, which mirrors correctly under RTL locales.
+
+**Affected**
+
+- `:core:designsystem/component/WeatherIcon.kt`
+
+**Why deferred**
+
+Out of PR 04's scope. Build still succeeds (warning, not error). RTL is not a current requirement.
+
+**Impact of deferral**
+
+- Functionality: unaffected
+- Build: warning only, no error
+- Risk: deprecated API may be removed in future Material Icons versions
+- Localization: RTL locales would render the help icon non-mirrored, but RTL is not a delivery requirement
+
+**Target resolution**: PR 06 (polish) — natural fit when refining UI.
+
+**Proposed change (when resolving)**
+
+```kotlin
+// In WeatherIcon.kt
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
+
+// In the when block:
+WeatherCondition.UNKNOWN -> Icons.AutoMirrored.Filled.HelpOutline
+```
+
+---
+
 ## Resolved Items
 
 _(Nothing resolved yet.)_
@@ -107,3 +175,5 @@ _(Nothing resolved yet.)_
 | ID | Title | Severity | Target | Status |
 |----|-------|----------|--------|--------|
 | TD-001 | Data source classes should be interfaces | Low | PR 07 | Open |
+| TD-002 | `getCityById` suspend overhead in observe chain | Low | PR 05/06 (re-evaluate) | Open |
+| TD-003 | Replace deprecated `HelpOutline` with `AutoMirrored` | Low | PR 06 | Open |

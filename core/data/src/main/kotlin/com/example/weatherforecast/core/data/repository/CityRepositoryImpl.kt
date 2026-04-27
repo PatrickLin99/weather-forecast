@@ -5,6 +5,7 @@ import com.example.weatherforecast.core.common.result.Result
 import com.example.weatherforecast.core.database.datasource.CityLocalDataSource
 import com.example.weatherforecast.core.domain.repository.CityRepository
 import com.example.weatherforecast.core.model.City
+import com.example.weatherforecast.core.network.datasource.CityRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -12,6 +13,7 @@ import javax.inject.Singleton
 @Singleton
 internal class CityRepositoryImpl @Inject constructor(
     private val local: CityLocalDataSource,
+    private val remote: CityRemoteDataSource,
 ) : CityRepository {
 
     override fun observeSavedCities(): Flow<List<City>> = local.observeCities()
@@ -22,4 +24,9 @@ internal class CityRepositoryImpl @Inject constructor(
 
     override suspend fun deleteCity(cityId: String): Result<Unit, AppError> =
         local.deleteCity(cityId)
+
+    override suspend fun searchCities(query: String): Result<List<City>, AppError> {
+        if (query.isBlank()) return Result.Success(emptyList())
+        return remote.searchCities(query)
+    }
 }
