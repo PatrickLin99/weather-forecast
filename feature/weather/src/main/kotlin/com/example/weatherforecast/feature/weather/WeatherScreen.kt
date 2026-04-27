@@ -17,16 +17,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.weatherforecast.core.designsystem.component.ErrorState
 import com.example.weatherforecast.core.designsystem.component.LoadingIndicator
+import com.example.weatherforecast.core.model.TemperatureUnit
 import com.example.weatherforecast.feature.weather.component.CurrentWeatherHeader
 import com.example.weatherforecast.feature.weather.component.DailyForecastList
 import com.example.weatherforecast.feature.weather.component.LocationDisabledBanner
@@ -46,6 +50,7 @@ fun WeatherScreen(
     val viewModel: WeatherViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val locationPromptState by viewModel.locationPromptState.collectAsStateWithLifecycle()
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     val permissionState = rememberPermissionState(
@@ -67,6 +72,7 @@ fun WeatherScreen(
     WeatherContent(
         uiState = uiState,
         locationPromptState = locationPromptState,
+        isRefreshing = isRefreshing,
         onRequestPermission = { permissionState.launchPermissionRequest() },
         onOpenLocationSettings = {
             context.startActivity(
@@ -75,6 +81,8 @@ fun WeatherScreen(
             )
         },
         onRetry = viewModel::onRefresh,
+        onRefresh = viewModel::onRefresh,
+        onToggleUnit = viewModel::onToggleTemperatureUnit,
         onNavigateToCityList = onNavigateToCityList,
         modifier = modifier,
     )
@@ -85,9 +93,12 @@ fun WeatherScreen(
 internal fun WeatherContent(
     uiState: WeatherUiState,
     locationPromptState: LocationPromptState,
+    isRefreshing: Boolean,
     onRequestPermission: () -> Unit,
     onOpenLocationSettings: () -> Unit,
     onRetry: () -> Unit,
+    onRefresh: () -> Unit,
+    onToggleUnit: () -> Unit,
     onNavigateToCityList: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -101,12 +112,22 @@ internal fun WeatherContent(
                             text = uiState.city.name,
                             modifier = Modifier.clickable { onNavigateToCityList() },
                         )
-                        else -> Text("Weather")
+                        else -> Text(stringResource(R.string.weather_title_default))
                     }
                 },
                 actions = {
+                    if (uiState is WeatherUiState.Success) {
+                        TextButton(onClick = onToggleUnit) {
+                            Text(
+                                text = when (uiState.weather.unit) {
+                                    TemperatureUnit.CELSIUS -> stringResource(R.string.weather_unit_celsius)
+                                    TemperatureUnit.FAHRENHEIT -> stringResource(R.string.weather_unit_fahrenheit)
+                                },
+                            )
+                        }
+                    }
                     TextButton(onClick = onNavigateToCityList) {
-                        Text("Cities")
+                        Text(stringResource(R.string.weather_action_cities))
                     }
                 },
             )
@@ -130,32 +151,49 @@ internal fun WeatherContent(
                 when (uiState) {
                     is WeatherUiState.Loading -> LoadingIndicator()
                     is WeatherUiState.Error -> ErrorState(
-                        message = "Unable to load weather",
+                        message = stringResource(R.string.weather_message_unable_to_load),
                         onRetry = if (uiState.canRetry) onRetry else null,
                         modifier = Modifier.fillMaxSize(),
                     )
-                    is WeatherUiState.Success -> WeatherSuccessContent(state = uiState)
+                    is WeatherUiState.Success -> WeatherSuccessContent(
+                        state = uiState,
+                        isRefreshing = isRefreshing,
+                        onRefresh = onRefresh,
+                    )
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun WeatherSuccessContent(state: WeatherUiState.Success) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+private fun WeatherSuccessContent(
+    state: WeatherUiState.Success,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
+) {
+    val pullToRefreshState = rememberPullToRefreshState()
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        state = pullToRefreshState,
+        modifier = Modifier.fillMaxSize(),
     ) {
-        if (state.isStale && state.transientMessage != null) {
-            StaleDataBanner(message = state.transientMessage)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            if (state.isStale && state.transientError != null) {
+                StaleDataBanner(message = state.transientError.toUserMessage())
+            }
+            CurrentWeatherHeader(weather = state.weather)
+            WeatherDetailsRow(weather = state.weather)
+            DailyForecastList(forecasts = state.weather.daily)
         }
-        CurrentWeatherHeader(weather = state.weather)
-        WeatherDetailsRow(weather = state.weather)
-        DailyForecastList(forecasts = state.weather.daily)
     }
 }
 
