@@ -1031,3 +1031,36 @@ grep -rn "import com.example.weatherforecast.core.network\|import com.example.we
    - Mistakes section is required and must include real examples from PRs 03/04/05 retrospectives
 
 10. **When something seems out-of-scope:** flag it. PR 07 is the catch-all for finishing, not for new ideas.
+
+## Post-PR Retrospective
+
+**Status**: Done — 2026-04-XX
+
+### Stage 1 — TD-001 refactor + tests
+
+TD-001 refactor extended cleanly to 6 data sources (the original 5 plus PR05's `LocationDataSource`). No cascading effects beyond the affected modules. The Hilt graph stayed intact through the refactor — `:app:kspDebugKotlin` passed on first try after each module's binding update.
+
+7 test files, 36 tests total. Three test-side issues encountered and resolved in-test (no production code changed):
+- `emptyList()` type inference required explicit type parameter
+- StateFlow with `WhileSubscribed` upstream needed `.test {}` subscription to start emitting
+- Conditional branches in some tests handle non-deterministic emit ordering between StateFlow combine and debounce — works, but ideally would use `StandardTestDispatcher` + explicit `runCurrent()` for fully deterministic flow assertions. Future improvement.
+
+### Stage 2 — README + AI_USAGE
+
+README — straightforward; no surprises.
+
+AI_USAGE.md — first draft had AI tone in roughly 4 places (modal verbs, "real leverage" rhetoric, oppositional sentence structures). Rewrote those to match my actual writing voice. The Mistakes section initially included a mis-described mistake (Hilt silent upgrade) that on review wasn't really silent — it was a flagged-and-investigated decision. Replaced with the actual PR03 mistake (missing Error path in `WeatherViewModel`).
+
+### Stage 3 — Final regression
+
+Automated checks: all green (clean build, release build, 36 tests, boundary, no TODO).
+
+Manual emulator regression: 3 bugs surfaced that were not caught by previous PRs' scenario coverage:
+
+1. **Default city ID collision** — `DefaultCity.TAIPEI.id = "default_taipei"` vs geocoding API's Taipei id `"<numeric>"`. Searching Taipei creates a duplicate row alongside the default-installed one. The "default" row cannot be deleted because `DeleteCityUseCase` re-inserts it as fallback. Visible to user as "two Taipeis, one undeletable."
+
+2. **Location permission re-resolve trigger** — when permission is granted and the emulator's location changes between launches, the app shows the previously-cached city, not the new location. The `wasUsable → nowUsable` transition guard in `WeatherViewModel.onLocationPermissionChanged` doesn't fire when permission state itself didn't change.
+
+3. **Permission banner ineffective after deny** — Android's `launchPermissionRequest()` becomes a silent no-op after the user denies twice. The banner's onTap doesn't fall through to opening system Settings, so user perceives the banner as broken.
+
+These will be addressed in a separate hotfix PR (PR 08), keeping PR 07 focused on its stated scope (TD-001 + tests + delivery docs). All three bugs were introduced in earlier PRs (03/04/05) — the final regression's value was exactly catching them before delivery.
