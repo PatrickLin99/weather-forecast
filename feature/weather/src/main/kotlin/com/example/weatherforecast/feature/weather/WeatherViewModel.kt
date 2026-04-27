@@ -59,9 +59,9 @@ class WeatherViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            // Bootstrap: on fresh install, persist DefaultCity.TAIPEI and set it as selected
-            // so the selectedCityId Flow has something to emit.
-            resolveInitialCity()
+            // PR05 Stage 1 stopgap: useLocation=false keeps the build green.
+            // Stage 2 wires _hasLocationPermission and re-runs resolve when permission flips.
+            resolveInitialCity(useLocation = false)
             // Auto-refresh whenever the selected city changes (also fires on the first emit).
             observeSelectedCity().collect { city ->
                 refresh(city)
@@ -73,7 +73,7 @@ class WeatherViewModel @Inject constructor(
         launchRefresh {
             when (val state = uiState.value) {
                 is WeatherUiState.Success -> state.city
-                else -> resolveInitialCity()
+                else -> resolveInitialCity(useLocation = false)
             }
         }
     }
