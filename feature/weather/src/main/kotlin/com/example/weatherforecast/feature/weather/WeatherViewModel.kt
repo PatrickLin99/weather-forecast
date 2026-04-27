@@ -19,6 +19,8 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,6 +34,7 @@ class WeatherViewModel @Inject constructor(
     private val _lastRefreshError = MutableStateFlow<AppError?>(null)
     private val _hasLocationPermission = MutableStateFlow(false)
     private val _isLocationEnabled = MutableStateFlow(true)
+    private val refreshMutex = Mutex()
 
     val locationPromptState: StateFlow<LocationPromptState> = combine(
         _hasLocationPermission,
@@ -87,17 +90,20 @@ class WeatherViewModel @Inject constructor(
     }
 
     fun onLocationPermissionChanged(granted: Boolean, locationEnabled: Boolean) {
+        val wasUsable = _hasLocationPermission.value && _isLocationEnabled.value
         _hasLocationPermission.value = granted
         _isLocationEnabled.value = locationEnabled
-        if (granted && locationEnabled) {
+        val nowUsable = granted && locationEnabled
+        // Only resolve when transitioning from non-usable to usable. This avoids
+        // redundant resolves on every WeatherScreen re-entry (e.g. back from CityList).
+        if (nowUsable && !wasUsable) {
             viewModelScope.launch {
                 try {
-                    val city = resolveInitialCity(useLocation = true)
-                    // observeSelectedCity uses distinctUntilChanged on cityId; when re-detection
-                    // returns the same "current_location" id (Scenario 6), the auto-refresh
-                    // chain doesn't fire. Refresh here so the just-detected city's weather
-                    // shows up after re-detection without an app restart.
-                    refresh(city)
+                    resolveInitialCity(useLocation = true)
+                    // No manual refresh needed: resolveInitialCity upserts the
+                    // current_location row, which triggers observeSavedCities() → the
+                    // observe chain re-emits the updated City → WeatherViewModel.init
+                    // collect loop fires refresh automatically.
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Throwable) {
@@ -129,9 +135,11 @@ class WeatherViewModel @Inject constructor(
     }
 
     private suspend fun refresh(city: City) {
-        refreshWeather(city)
-            .onSuccess { _lastRefreshError.value = null }
-            .onFailure { _lastRefreshError.value = it }
+        refreshMutex.withLock {
+            refreshWeather(city)
+                .onSuccess { _lastRefreshError.value = null }
+                .onFailure { _lastRefreshError.value = it }
+        }
     }
 }
 

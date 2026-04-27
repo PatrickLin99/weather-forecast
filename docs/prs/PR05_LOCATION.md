@@ -1032,12 +1032,17 @@ grep -rn "import com.example.weatherforecast.core.location" feature/
 
 ## Post-PR Retrospective (fill after merge)
 
-- Total time taken:
-- Permission flow — anything surprising about Accompanist or the Compose permission API?
-- Did the `id = "current_location"` de-duplication work, or did re-detections create dupes?
-- Geocoder reliability on emulator vs real device?
-- Any TECH_DEBT updates? (e.g., `LocationProvider` `@Inject internal constructor` — consolidate with TD-001 or extend it?)
-- Anything to update in `docs/MODULE_STRUCTURE.md` based on what we learned?
+- **Permission flow**: `LaunchedEffect(permissionState.status)` fires on every WeatherScreen re-entry into composition (e.g. back from CityList), not only when status actually changes. This triggered a spurious re-resolve each time. Fixed by computing `wasUsable` before updating fields in `onLocationPermissionChanged` and only calling `resolveInitialCity` on a `false → true` transition.
+
+- **Stale city bug (Bug A / TD-002)**: Both use cases originally called `getCityById(id)` as a one-shot query. When `current_location` was re-detected at the same place the id didn't change, so `distinctUntilChanged` and `flatMapLatest` never re-executed — the UI showed the old city. Fixed by switching to `combine(..., cityRepository.observeSavedCities())` in both use cases. Any Room row mutation now triggers re-resolution. TD-002 resolved.
+
+- **`current_location` de-duplication**: Works correctly. The stable `id = "current_location"` prevents duplication on repeated detections. Verified on emulator.
+
+- **Geocoder on emulator**: The AOSP emulator Geocoder (no Google Play Services) is unreliable — may return empty results. FusedLocationProvider with `PRIORITY_BALANCED_POWER_ACCURACY` returns a cached network location on the emulator and ignores `adb emu geo fix`. This means Scenario 6 (same-id re-detect with a *different* city) could not be fully exercised on the emulator; the fix is logically correct and relies on Room's reactive emission.
+
+- **Open UX question**: CityList shows the `current_location` row as "Chiyoda City, Japan" alongside any manually-added cities. There is no visual distinction or deduplication between the auto-detected row and manual saves. Deferred to PR 06 for polish — UX design decision needed.
+
+- **TECH_DEBT**: TD-002 resolved. `LocationProvider` `@Inject internal constructor` pattern is consistent with the existing TD-001 pattern — extended TD-001's affected list implicitly; no separate entry added.
 
 ---
 
