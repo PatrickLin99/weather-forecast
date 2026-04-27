@@ -53,15 +53,15 @@ Repository, UseCase, and ViewModel tests in PR 07 were generated from patterns �
 
 I include this section because AI is not infallible, and a candid review of where it fell short is more useful than a polished one-sided account.
 
-### Mistake 1: Silent tooling upgrade in PR 03
+### Mistake 1: Missing Error path in WeatherViewModel combine chain (PR 03)
 
-**What happened**: Claude Code, given the PR 03 spec, decided unilaterally to upgrade Hilt from `2.55` to `2.59.2`. It did not flag this — it appeared in the Stage 1 commit list alongside the actual feature code.
+**What happened**: The PR 03 spec designed `WeatherViewModel`'s `uiState` with a two-branch shape: `weather != null → Success`, `else → Loading`. There was no Error path for the case where Room has no cached data AND the network refresh has already failed. The spec — co-written by me with AI in web chat — simply didn't consider that branch.
 
-**How it surfaced**: I caught it during the Stage 3 code review on GitHub.
+**How it surfaced**: During Stage 3 emulator validation, Claude Code ran the cold-start offline scenario (airplane mode on, fresh install, no cache). The screen showed a Loading spinner and never moved. Claude Code cross-referenced `docs/ERROR_HANDLING.md`, which states explicitly: "Room has nothing and refresh failed → the UI must surface `UiState.Error(canRetry = true)`, not stay in Loading." That was the contradiction that proved the spec was wrong.
 
-**How it was resolved**: The upgrade turned out to be defensible — Hilt 2.55 has a known incompatibility with AGP 9's transform pipeline, and `2.59.2` fixes it. The version was kept. But the lack of transparency was the problem. I added rule #8 to `CLAUDE.md` immediately: *"Flag version changes before applying. Include: current version, target version, reason for upgrade, and any breaking change implications."* Every subsequent PR (04 through 07) saw Claude Code stop and ask before any version bump.
+**How it was resolved**: Claude Code proposed adding `_lastRefreshError: MutableStateFlow<AppError?>` to the ViewModel and restructuring the combine into a three-way branch: `weather != null → Success`; `lastError != null → Error(canRetry=true)`; `else → Loading`. The `onRefresh` handler was extended to also transition from Error state. After the fix, the cold-start offline scenario passed: Error screen appeared with a Retry button.
 
-**Lesson**: Without an explicit rule, AI takes initiative on tooling questions and doesn't distinguish "I upgraded a dep" from "I added a method call." Adding one rule to `CLAUDE.md` changed this behavior immediately and consistently across all future sessions.
+**Lesson**: Even a detailed spec written collaboratively can miss edge cases that only become obvious at runtime. Having Claude Code reference the architecture docs during emulator runs — rather than just executing the spec — is what caught this. The spec documents are meant to be constraints, not just prompts; AI using them to challenge the spec's own gaps is more valuable than AI blindly following the spec.
 
 ### Mistake 2: Spec misjudgment about observe-equals-refresh in PR 04
 
@@ -99,7 +99,14 @@ Result: after moving the emulator from Tokyo to Osaka, the app still showed Toky
 - **AI didn't manage Git.** Each PR was created, reviewed, and merged manually on GitHub. Branch hygiene was my responsibility.
 - **AI didn't pick UX details** — color choices, icon sizes, copy text — without my direction. Visual decisions stayed human-driven.
 
-## Practices That Worked Well
+### Treating spec as a draft, not a contract
+
+Three of the seven PR specs had architectural mistakes I caught only during
+implementation or emulator testing — and corrected before merge. The spec
+isn't a contract with AI; it's a draft that gets revised when reality pushes
+back. PR 04's spec was wrong about "observe = refresh." PR 05's spec didn't
+anticipate a race between init refresh and permission re-resolve. Catching
+these required treating my own spec critically, not just taking AI's interpretation.
 
 ### Living docs that AI reads
 
@@ -132,3 +139,7 @@ Each PR spec ends with a "Post-PR Retrospective" section. Filling it in after ea
 **Quality improvement from AI**: Mixed. Code patterns are more consistent than I'd produce alone, and the architecture documents are more thorough. But three of the project's notable bugs (Mistakes 1–3 above) involved AI proposing a flawed design that I initially trusted. Without the emulator verification step, at least two would have shipped.
 
 **The real leverage**: The biggest productivity gain wasn't the code generation — it was the workflow: per-PR specs written before any code, stage checkpoints, `TECH_DEBT.md` as a prediction log, retrospectives as documentation drafts. These practices would be worth keeping even on a project with no AI involved.
+
+This was the first time I worked with AI in this density across an entire
+project. I went in expecting a code generator. I left with a collaborator
+that occasionally needed correcting and a workflow I'll keep using.
