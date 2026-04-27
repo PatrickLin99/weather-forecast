@@ -1,0 +1,12 @@
+<resources>
+    <string name="citylist_title">Cities</string>
+    <string name="citylist_search_placeholder">Search cities</string>
+    <string name="citylist_search_no_matches">No matches</string>
+    <string name="citylist_search_failed">Search failed. Try again.</string>
+    <string name="citylist_empty_hint">Search above to add a city</string>
+    <string name="citylist_action_clear">Clear</string>
+    <string name="citylist_action_back">Back</string>
+    <string name="citylist_action_delete">Delete</string>
+    <string name="citylist_label_selected">Selected</string>
+    <string name="citylist_label_current_location">Current location</string>
+</resources>

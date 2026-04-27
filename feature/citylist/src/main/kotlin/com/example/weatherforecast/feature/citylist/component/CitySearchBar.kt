@@ -10,6 +10,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.example.weatherforecast.feature.citylist.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,12 +24,15 @@ internal fun CitySearchBar(
         value = query,
         onValueChange = onQueryChanged,
         modifier = modifier,
-        placeholder = { Text("Search cities") },
+        placeholder = { Text(stringResource(R.string.citylist_search_placeholder)) },
         leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
         trailingIcon = {
             if (query.isNotEmpty()) {
                 IconButton(onClick = { onQueryChanged("") }) {
-                    Icon(Icons.Filled.Clear, contentDescription = "Clear")
+                    Icon(
+                        Icons.Filled.Clear,
+                        contentDescription = stringResource(R.string.citylist_action_clear),
+                    )
                 }
             }
         },

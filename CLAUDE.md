@@ -119,17 +119,17 @@ See `docs/MODULE_STRUCTURE.md` for detailed package structure of each module.
 | 02 | Core foundations: model, common, network, database, datastore, designsystem | Hello Compose (no UI change) | ✅ |
 | 03 | First vertical: domain, data, feature:weather (Taipei hardcoded, no location yet) | First real weather screen | ✅ |
 | 04 | feature:citylist + search + city switching | Switch cities | ✅ |
-| 05 | core:location + geocoding integration | Auto-detect current location | ⏳ |
-| 06 | Polish: pull-to-refresh, °C/°F toggle, refined error UX | Full UX | ⏳ |
+| 05 | core:location + geocoding integration | Auto-detect current location | ✅ |
+| 06 | Polish: pull-to-refresh, °C/°F toggle, refined error UX | Full UX | ✅ |
 | 07 | Tests + README + AI_USAGE.md | Final deliverable | ⏳ |
 
 ### Current PR
 
-**PR #04 — City List and Search** ✅ merged
-- Branch: `feat/04-citylist`
-- Scope: `:feature:citylist` (search + saved list + delete), three new UseCases (`SearchCitiesUseCase`, `SelectCityUseCase`, `DeleteCityUseCase` with selected-city fallback), `searchCities` added to `CityRepository`. Uncovered + fixed a PR03 gap: weather refresh now triggers on every `selectedCityId` change via the new `ObserveSelectedCityUseCase` collected in `WeatherViewModel.init`.
-- Spec: see `docs/prs/PR04_CITYLIST.md`
-- Execution: 3-stage with checkpoints (Domain+Data / Feature UI / App integration).
+**PR #06 — Polish: Refresh, Units, Error UX, Visual Refinement** ✅ done
+- Branch: `feat/06-polish`
+- Scope: pull-to-refresh, °C/°F toggle, strings.xml extraction, AppError→Composable mapping, TD-003 fix (AutoMirrored HelpOutline), MyLocation icon on current_location CityList rows, inline SearchErrorBanner replacing full-screen error.
+- Spec: see `docs/prs/PR06_POLISH.md`
+- Execution: 2-stage with emulator checkpoint between stages.
 
 ### Definition of Done (per PR)
 

@@ -20,14 +20,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.weatherforecast.core.designsystem.component.ErrorState
 import com.example.weatherforecast.core.model.City
 import com.example.weatherforecast.feature.citylist.component.CitySearchBar
 import com.example.weatherforecast.feature.citylist.component.EmptySavedListHint
 import com.example.weatherforecast.feature.citylist.component.SavedCityItem
+import com.example.weatherforecast.feature.citylist.component.SearchErrorBanner
 import com.example.weatherforecast.feature.citylist.component.SearchResultItem
 
 @Composable
@@ -62,10 +63,13 @@ internal fun CityListContent(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text("Cities") },
+                title = { Text(stringResource(R.string.citylist_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.citylist_action_back),
+                        )
                     }
                 },
             )
@@ -101,11 +105,18 @@ internal fun CityListContent(
                     results = s.cities,
                     onTap = onCityTapped,
                 )
-                is SearchState.Error -> ErrorState(
-                    message = "Search failed. Try again.",
-                    onRetry = null,
-                    modifier = Modifier.fillMaxSize(),
-                )
+                is SearchState.Error -> Column {
+                    SearchErrorBanner(
+                        message = stringResource(R.string.citylist_search_failed),
+                        onDismiss = { onQueryChanged("") },
+                    )
+                    SavedCitiesList(
+                        cities = uiState.savedCities,
+                        selectedCityId = uiState.selectedCityId,
+                        onTap = onCityTapped,
+                        onDelete = onDeleteCity,
+                    )
+                }
             }
         }
     }
@@ -144,7 +155,7 @@ private fun SearchResultsList(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
-            Text("No matches")
+            Text(stringResource(R.string.citylist_search_no_matches))
         }
         return
     }

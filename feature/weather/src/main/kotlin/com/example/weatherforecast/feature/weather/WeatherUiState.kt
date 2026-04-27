@@ -11,7 +11,7 @@ sealed interface WeatherUiState {
         val weather: Weather,
         val city: City,
         val isStale: Boolean = false,
-        val transientMessage: String? = null,
+        val transientError: AppError? = null,
     ) : WeatherUiState
 
     data class Error(

@@ -13,9 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.weatherforecast.core.designsystem.component.WeatherIcon
 import com.example.weatherforecast.core.model.DailyForecast
+import com.example.weatherforecast.feature.weather.R
 
 @Composable
 internal fun DailyForecastList(
@@ -26,7 +28,7 @@ internal fun DailyForecastList(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text("7-Day Forecast", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.weather_label_seven_day), style = MaterialTheme.typography.titleMedium)
         forecasts.forEach { forecast ->
             DailyForecastRow(forecast = forecast)
         }

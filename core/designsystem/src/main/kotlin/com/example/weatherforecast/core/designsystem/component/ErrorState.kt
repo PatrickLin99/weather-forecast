@@ -14,7 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.weatherforecast.core.designsystem.R
 
 @Composable
 fun ErrorState(
@@ -35,7 +37,7 @@ fun ErrorState(
         Text(message, style = MaterialTheme.typography.bodyLarge)
         if (onRetry != null) {
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = onRetry) { Text("Retry") }
+            Button(onClick = onRetry) { Text(stringResource(R.string.designsystem_action_retry)) }
         }
     }
 }

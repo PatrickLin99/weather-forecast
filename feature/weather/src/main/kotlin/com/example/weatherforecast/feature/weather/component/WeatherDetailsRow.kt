@@ -10,8 +10,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.weatherforecast.core.model.Weather
+import com.example.weatherforecast.feature.weather.R
 
 @Composable
 internal fun WeatherDetailsRow(
@@ -24,9 +26,18 @@ internal fun WeatherDetailsRow(
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
-        WeatherDetailItem(label = "Feels like", value = "${weather.feelsLike.toInt()}°")
-        WeatherDetailItem(label = "Humidity", value = "${weather.humidity}%")
-        WeatherDetailItem(label = "Wind", value = "${weather.windSpeed.toInt()} m/s")
+        WeatherDetailItem(
+            label = stringResource(R.string.weather_label_feels_like),
+            value = "${weather.feelsLike.toInt()}°",
+        )
+        WeatherDetailItem(
+            label = stringResource(R.string.weather_label_humidity),
+            value = "${weather.humidity}%",
+        )
+        WeatherDetailItem(
+            label = stringResource(R.string.weather_label_wind),
+            value = "${weather.windSpeed.toInt()} m/s",
+        )
     }
 }
 
