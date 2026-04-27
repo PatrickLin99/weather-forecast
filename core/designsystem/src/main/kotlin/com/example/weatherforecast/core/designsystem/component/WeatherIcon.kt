@@ -4,7 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Cloud
-import androidx.compose.material.icons.filled.HelpOutline
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Icon
@@ -25,7 +25,7 @@ fun WeatherIcon(
         WeatherCondition.SNOW -> Icons.Filled.AcUnit
         WeatherCondition.THUNDERSTORM -> Icons.Filled.Bolt
         WeatherCondition.FOG -> Icons.Filled.Cloud
-        WeatherCondition.UNKNOWN -> Icons.Filled.HelpOutline
+        WeatherCondition.UNKNOWN -> Icons.AutoMirrored.Filled.HelpOutline
     }
     Icon(
         imageVector = icon,
