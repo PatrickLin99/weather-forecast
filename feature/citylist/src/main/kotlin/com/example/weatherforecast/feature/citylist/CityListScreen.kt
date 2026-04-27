@@ -24,11 +24,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.weatherforecast.core.designsystem.component.ErrorState
 import com.example.weatherforecast.core.model.City
 import com.example.weatherforecast.feature.citylist.component.CitySearchBar
 import com.example.weatherforecast.feature.citylist.component.EmptySavedListHint
 import com.example.weatherforecast.feature.citylist.component.SavedCityItem
+import com.example.weatherforecast.feature.citylist.component.SearchErrorBanner
 import com.example.weatherforecast.feature.citylist.component.SearchResultItem
 
 @Composable
@@ -105,11 +105,18 @@ internal fun CityListContent(
                     results = s.cities,
                     onTap = onCityTapped,
                 )
-                is SearchState.Error -> ErrorState(
-                    message = stringResource(R.string.citylist_search_failed),
-                    onRetry = null,
-                    modifier = Modifier.fillMaxSize(),
-                )
+                is SearchState.Error -> Column {
+                    SearchErrorBanner(
+                        message = stringResource(R.string.citylist_search_failed),
+                        onDismiss = { onQueryChanged("") },
+                    )
+                    SavedCitiesList(
+                        cities = uiState.savedCities,
+                        selectedCityId = uiState.selectedCityId,
+                        onTap = onCityTapped,
+                        onDelete = onDeleteCity,
+                    )
+                }
             }
         }
     }
