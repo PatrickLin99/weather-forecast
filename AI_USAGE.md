@@ -51,7 +51,7 @@ Repository, UseCase, and ViewModel tests in PR 07 were generated from patterns �
 
 ## Notable Mistakes (And What I Did About Them)
 
-I include this section because AI is not infallible, and a candid review of where it fell short is more useful than a polished one-sided account.
+Three things AI got wrong on this project; documented here so the workflow story is honest.
 
 ### Mistake 1: Missing Error path in WeatherViewModel combine chain (PR 03)
 
@@ -61,7 +61,7 @@ I include this section because AI is not infallible, and a candid review of wher
 
 **How it was resolved**: Claude Code proposed adding `_lastRefreshError: MutableStateFlow<AppError?>` to the ViewModel and restructuring the combine into a three-way branch: `weather != null → Success`; `lastError != null → Error(canRetry=true)`; `else → Loading`. The `onRefresh` handler was extended to also transition from Error state. After the fix, the cold-start offline scenario passed: Error screen appeared with a Retry button.
 
-**Lesson**: Even a detailed spec written collaboratively can miss edge cases that only become obvious at runtime. Having Claude Code reference the architecture docs during emulator runs — rather than just executing the spec — is what caught this. The spec documents are meant to be constraints, not just prompts; AI using them to challenge the spec's own gaps is more valuable than AI blindly following the spec.
+**Lesson**: The spec docs are constraints, not prompts. The value showed up when Claude Code used them against the spec itself — catching the gap from inside, not just executing instructions.
 
 ### Mistake 2: Spec misjudgment about observe-equals-refresh in PR 04
 
@@ -122,7 +122,7 @@ This file evolved with the project. When Claude Code's behavior wasn't quite rig
 
 When AI proposed a workaround that wasn't ideal, I logged it as a TD entry rather than letting it disappear into the commit history. Each entry includes: what it is, why it's deferred, and which PR is expected to resolve it.
 
-3 entries logged → 3 entries resolved. Logging tech debt isn't just bookkeeping — it actively accelerated diagnosis when those predictions came true.
+3 entries logged → 3 entries resolved. Each entry is a prediction. When the predicted bug shows up, the diagnosis is already half written.
 
 ### Per-stage checkpoints
 
@@ -138,8 +138,6 @@ Each PR spec ends with a "Post-PR Retrospective" section. Filling it in after ea
 
 **Quality improvement from AI**: Mixed. Code patterns are more consistent than I'd produce alone, and the architecture documents are more thorough. But three of the project's notable bugs (Mistakes 1–3 above) involved AI proposing a flawed design that I initially trusted. Without the emulator verification step, at least two would have shipped.
 
-**The real leverage**: The biggest productivity gain wasn't the code generation — it was the workflow: per-PR specs written before any code, stage checkpoints, `TECH_DEBT.md` as a prediction log, retrospectives as documentation drafts. These practices would be worth keeping even on a project with no AI involved.
+**Workflow > generation.** The productivity gain came from the practices around AI, not the AI output itself: per-PR specs written before any code, stage checkpoints between commits, `TECH_DEBT.md` as a prediction log, retrospectives as documentation drafts. These would be worth keeping on a project without AI.
 
-This was the first time I worked with AI in this density across an entire
-project. I went in expecting a code generator. I left with a collaborator
-that occasionally needed correcting and a workflow I'll keep using.
+First project where I used AI this densely from start to finish. Going in I expected a code generator; what stuck was the workflow — specs before code, stage checkpoints, `TECH_DEBT` as prediction log. The collaborator part needed pushing back on more than I expected, but that's part of the workflow too.

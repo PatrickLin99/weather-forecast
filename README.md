@@ -1,4 +1,4 @@
-_# Weather Forecast
+# Weather Forecast
 
 An Android weather app demonstrating modern Android architecture: Kotlin, Coroutines, Jetpack Compose, Clean Architecture, multi-module Gradle setup, and full SSOT data flow.
 
@@ -39,7 +39,7 @@ An Android weather app demonstrating modern Android architecture: Kotlin, Corout
 ### Build & Run
 
 ```bash
-git clone <repo-url>
+git clone git@github.com:PatrickLin99/weather-forecast.git
 cd WeatherForecast
 ./gradlew :app:installDebug
 ```
@@ -128,4 +128,4 @@ WeatherForecast/
 This app uses [Open-Meteo](https://open-meteo.com/) — free, no API key required.
 
 - Forecast: `https://api.open-meteo.com/v1/forecast`
-- Geocoding: `https://geocoding-api.open-meteo.com/v1/search`_
+- Geocoding: `https://geocoding-api.open-meteo.com/v1/search`
