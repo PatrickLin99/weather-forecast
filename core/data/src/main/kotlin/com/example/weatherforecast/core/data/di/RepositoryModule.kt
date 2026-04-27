@@ -1,9 +1,11 @@
 package com.example.weatherforecast.core.data.di
 
 import com.example.weatherforecast.core.data.repository.CityRepositoryImpl
+import com.example.weatherforecast.core.data.repository.LocationRepositoryImpl
 import com.example.weatherforecast.core.data.repository.UserPreferencesRepositoryImpl
 import com.example.weatherforecast.core.data.repository.WeatherRepositoryImpl
 import com.example.weatherforecast.core.domain.repository.CityRepository
+import com.example.weatherforecast.core.domain.repository.LocationRepository
 import com.example.weatherforecast.core.domain.repository.UserPreferencesRepository
 import com.example.weatherforecast.core.domain.repository.WeatherRepository
 import dagger.Binds
@@ -29,4 +31,8 @@ internal abstract class RepositoryModule {
     abstract fun bindUserPreferencesRepository(
         impl: UserPreferencesRepositoryImpl,
     ): UserPreferencesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindLocationRepository(impl: LocationRepositoryImpl): LocationRepository
 }
