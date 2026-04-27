@@ -99,29 +99,23 @@ internal abstract class DataSourceBindModule {
 ### TD-002: `getCityById` suspend overhead inside observe chain
 
 **Introduced**: PR 04 (Stage 3 fix)
-**Status**: Open
+**Status**: Resolved — PR 05
 **Severity**: Low
 
 **What**
 
-`ObserveSelectedCityUseCase` calls `cityRepository.getCityById(id)` inside `Flow.map { ... }` every time `selectedCityId` emits. `getCityById` is a `suspend` function backed by a single Room query, so each emission incurs a Room read on the IO dispatcher.
+`ObserveSelectedCityUseCase` called `cityRepository.getCityById(id)` inside `Flow.map { ... }` every time `selectedCityId` emitted. This was a one-shot suspend query — it didn't re-run when the selected city's row was updated in-place (same id, updated name/coords), causing a stale City object to remain in the observe chain.
 
 **Affected**
 
 - `:core:domain/usecase/ObserveSelectedCityUseCase.kt`
-- Indirectly: `:core:domain/usecase/ObserveSelectedCityWeatherUseCase.kt` (does the same lookup in its `flatMapLatest` block)
+- `:core:domain/usecase/ObserveSelectedCityWeatherUseCase.kt`
 
-**Why deferred**
+**Resolution (PR 05)**
 
-Selection changes are user-driven — typically one or two per session — so the per-emit cost is negligible at PR 04 scope. Switching to a Flow-based query (`cityDao.observeById(id): Flow<City?>`) would require a new DAO method and a refactor across both UseCases. Not justified yet.
+Both use cases now use `combine(selectedCityId, cityRepository.observeSavedCities())` and resolve the city by filtering the live list: `cities.firstOrNull { it.id == id } ?: DefaultCity.TAIPEI`. Since `observeSavedCities()` is backed by a Room DAO `Flow`, any in-place upsert (including `current_location` re-detection) triggers a new emission and the City object is always fresh.
 
-**Impact of deferral**
-
-- Functionality: unaffected
-- Performance: imperceptible at current usage; would matter only if selection started changing programmatically at high frequency (none planned)
-- Testability: unchanged
-
-**Target resolution**: re-evaluate in PR 05 or PR 06. If location auto-detect (PR 05) starts re-emitting `selectedCityId` on every location update, or unit toggle (PR 06) ends up reusing this UseCase with churning inputs, promote to a Flow-based DAO query.
+Note: Did NOT add the proposed `observeCityById(id)` DAO method. Observing the full saved-cities list and filtering by id is sufficient for current scale and avoids adding a new DAO query. A per-row `Flow<City?>` observe could be added as a future performance optimization if the city list grows large, but it is not a correctness issue.
 
 ---
 
@@ -166,7 +160,9 @@ WeatherCondition.UNKNOWN -> Icons.AutoMirrored.Filled.HelpOutline
 
 ## Resolved Items
 
-_(Nothing resolved yet.)_
+| ID | Title | Resolved in |
+|----|-------|-------------|
+| TD-002 | `getCityById` suspend overhead in observe chain | PR 05 |
 
 ---
 
@@ -175,5 +171,5 @@ _(Nothing resolved yet.)_
 | ID | Title | Severity | Target | Status |
 |----|-------|----------|--------|--------|
 | TD-001 | Data source classes should be interfaces | Low | PR 07 | Open |
-| TD-002 | `getCityById` suspend overhead in observe chain | Low | PR 05/06 (re-evaluate) | Open |
+| TD-002 | `getCityById` suspend overhead in observe chain | Low | PR 05 | Resolved |
 | TD-003 | Replace deprecated `HelpOutline` with `AutoMirrored` | Low | PR 06 | Open |
