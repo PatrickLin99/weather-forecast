@@ -122,7 +122,8 @@ Note: Did NOT add the proposed `observeCityById(id)` DAO method. Observing the f
 ### TD-003: Replace deprecated `Icons.Filled.HelpOutline` with `AutoMirrored` variant
 
 **Introduced**: PR 02 (compile warning surfaced during PR 04 final build)
-**Status**: Open
+**Status**: Resolved — PR 06
+**Resolution date**: 2026-04-27
 **Severity**: Low
 
 **What**
@@ -133,28 +134,9 @@ Note: Did NOT add the proposed `observeCityById(id)` DAO method. Observing the f
 
 - `:core:designsystem/component/WeatherIcon.kt`
 
-**Why deferred**
+**Resolution (PR 06)**
 
-Out of PR 04's scope. Build still succeeds (warning, not error). RTL is not a current requirement.
-
-**Impact of deferral**
-
-- Functionality: unaffected
-- Build: warning only, no error
-- Risk: deprecated API may be removed in future Material Icons versions
-- Localization: RTL locales would render the help icon non-mirrored, but RTL is not a delivery requirement
-
-**Target resolution**: PR 06 (polish) — natural fit when refining UI.
-
-**Proposed change (when resolving)**
-
-```kotlin
-// In WeatherIcon.kt
-import androidx.compose.material.icons.automirrored.filled.HelpOutline
-
-// In the when block:
-WeatherCondition.UNKNOWN -> Icons.AutoMirrored.Filled.HelpOutline
-```
+Replaced `Icons.Filled.HelpOutline` with `Icons.AutoMirrored.Filled.HelpOutline` in `core/designsystem/component/WeatherIcon.kt`. Build no longer emits the deprecation warning. RTL locales now render the icon correctly mirrored.
 
 ---
 
@@ -163,6 +145,7 @@ WeatherCondition.UNKNOWN -> Icons.AutoMirrored.Filled.HelpOutline
 | ID | Title | Resolved in |
 |----|-------|-------------|
 | TD-002 | `getCityById` suspend overhead in observe chain | PR 05 |
+| TD-003 | Replace deprecated `HelpOutline` with `AutoMirrored` | PR 06 |
 
 ---
 
@@ -172,4 +155,4 @@ WeatherCondition.UNKNOWN -> Icons.AutoMirrored.Filled.HelpOutline
 |----|-------|----------|--------|--------|
 | TD-001 | Data source classes should be interfaces | Low | PR 07 | Open |
 | TD-002 | `getCityById` suspend overhead in observe chain | Low | PR 05 | Resolved |
-| TD-003 | Replace deprecated `HelpOutline` with `AutoMirrored` | Low | PR 06 | Open |
+| TD-003 | Replace deprecated `HelpOutline` with `AutoMirrored` | Low | PR 06 | Resolved |
