@@ -15,9 +15,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.weatherforecast.core.designsystem.theme.WeatherAppTheme
+import com.example.weatherforecast.feature.weather.R
 
 @Composable
 internal fun LocationDisabledBanner(
@@ -41,7 +43,7 @@ internal fun LocationDisabledBanner(
             )
             Spacer(Modifier.width(12.dp))
             Text(
-                text = "Location is off — tap to enable in Settings",
+                text = stringResource(R.string.weather_banner_location_disabled),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onErrorContainer,
             )

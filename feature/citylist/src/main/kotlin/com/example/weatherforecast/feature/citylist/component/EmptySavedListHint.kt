@@ -13,7 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.weatherforecast.feature.citylist.R
 
 @Composable
 internal fun EmptySavedListHint(
@@ -31,7 +33,7 @@ internal fun EmptySavedListHint(
         )
         Spacer(Modifier.height(16.dp))
         Text(
-            "Search above to add a city",
+            stringResource(R.string.citylist_empty_hint),
             style = MaterialTheme.typography.bodyLarge,
         )
     }

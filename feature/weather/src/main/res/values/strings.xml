@@ -1,0 +1,21 @@
+<resources>
+    <string name="weather_title_default">Weather</string>
+    <string name="weather_action_cities">Cities</string>
+    <string name="weather_message_unable_to_load">Unable to load weather</string>
+    <string name="weather_label_feels_like">Feels like</string>
+    <string name="weather_label_humidity">Humidity</string>
+    <string name="weather_label_wind">Wind</string>
+    <string name="weather_label_seven_day">7-Day Forecast</string>
+    <string name="weather_unit_celsius">°C</string>
+    <string name="weather_unit_fahrenheit">°F</string>
+    <string name="weather_banner_location_permission">Enable location for auto-detect</string>
+    <string name="weather_banner_location_disabled">Location is off — tap to enable in Settings</string>
+
+    <string name="error_no_network">No internet connection</string>
+    <string name="error_network_timeout">Request timed out</string>
+    <string name="error_server">Server error. Please try again later.</string>
+    <string name="error_unknown_network">Network error</string>
+    <string name="error_database">Local data error</string>
+    <string name="error_data_parsing">Unexpected data format</string>
+    <string name="error_unexpected">Something went wrong</string>
+</resources>

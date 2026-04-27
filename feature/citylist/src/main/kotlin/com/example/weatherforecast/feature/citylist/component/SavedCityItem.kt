@@ -11,7 +11,9 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import com.example.weatherforecast.core.model.City
+import com.example.weatherforecast.feature.citylist.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,12 +30,18 @@ internal fun SavedCityItem(
         supportingContent = { Text(city.country) },
         leadingContent = {
             if (isSelected) {
-                Icon(Icons.Filled.Check, contentDescription = "Selected")
+                Icon(
+                    Icons.Filled.Check,
+                    contentDescription = stringResource(R.string.citylist_label_selected),
+                )
             }
         },
         trailingContent = {
             IconButton(onClick = onDelete) {
-                Icon(Icons.Filled.Delete, contentDescription = "Delete")
+                Icon(
+                    Icons.Filled.Delete,
+                    contentDescription = stringResource(R.string.citylist_action_delete),
+                )
             }
         },
     )

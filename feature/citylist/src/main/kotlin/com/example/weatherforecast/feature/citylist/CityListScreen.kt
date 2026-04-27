@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -62,10 +63,13 @@ internal fun CityListContent(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text("Cities") },
+                title = { Text(stringResource(R.string.citylist_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.citylist_action_back),
+                        )
                     }
                 },
             )
@@ -102,7 +106,7 @@ internal fun CityListContent(
                     onTap = onCityTapped,
                 )
                 is SearchState.Error -> ErrorState(
-                    message = "Search failed. Try again.",
+                    message = stringResource(R.string.citylist_search_failed),
                     onRetry = null,
                     modifier = Modifier.fillMaxSize(),
                 )
@@ -144,7 +148,7 @@ private fun SearchResultsList(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
-            Text("No matches")
+            Text(stringResource(R.string.citylist_search_no_matches))
         }
         return
     }
