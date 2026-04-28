@@ -27,7 +27,52 @@ Each entry has a stable ID (`TD-NNN`), never renumbered even when resolved.
 
 ## Open Items
 
-*(No open items — all tech debt resolved)*
+### TD-004: `LocationProvider.lastLocation` has no staleness check
+
+**Introduced**: PR 08
+**Status**: Open
+**Severity**: Low
+
+**What**
+
+`LocationProvider.getCurrentLocation()` falls back to `fusedClient.lastLocation` when the fresh-fix `getCurrentLocation()` call times out. `lastLocation` has no built-in age limit — if the user opened Maps days ago and hasn't moved, the result could be a multi-day-old position.
+
+**Why deferred**
+
+For city-level weather, a multi-day-old location is still more useful than showing a stale city row from the previous launch. The trade-off is acceptable for the current scope. The fallback exists specifically to recover the case where FLP has no active fix (common on emulators, possible on real devices) — without it, Bug B's ViewModel-level fix silently fell back to the stale DataStore city.
+
+**Affected**
+
+- `:core:location/provider/LocationProvider.kt`
+
+**Target resolution**
+
+If users report "weather shows old city after travel" or other staleness symptoms, add a timestamp check rejecting `lastLocation` results older than a threshold (e.g., 24 hours). Discovered while verifying PR 08's Bug B fix on the emulator.
+
+---
+
+## Resolved Items
+
+### TD-001: Data source classes should be interfaces
+
+**Introduced**: PR 02
+**Status**: Resolved — PR 07
+**Severity**: Low
+
+**What**
+
+Data source classes (`WeatherRemoteDataSource`, `CityRemoteDataSource`, `WeatherLocalDataSource`, `CityLocalDataSource`, `UserPreferencesDataSource`, plus PR 05's `LocationDataSource`) were initially declared as concrete classes with `@Inject internal constructor`. This worked for DI but coupled testing fakes to concrete implementations.
+
+**Affected**
+
+- `:core:network/datasource/`
+- `:core:database/datasource/`
+- `:core:datastore/datasource/`
+- `:core:location/datasource/`
+
+**Resolution (PR 07)**
+
+All 6 data sources refactored to `interface + internal class XxxImpl + @Binds` pattern. Each module gained a small `internal abstract class DataSourceBindModule` to bind interfaces to implementations. Test fakes now implement the interface directly, cleaner than mocking concrete classes. Module boundaries also strengthened — external consumers see only the interface, not the impl.
 
 ---
 
@@ -75,16 +120,6 @@ Replaced `Icons.Filled.HelpOutline` with `Icons.AutoMirrored.Filled.HelpOutline`
 
 ---
 
-## Resolved Items
-
-| ID | Title | Resolved in |
-|----|-------|-------------|
-| TD-001 | Data source classes should be interfaces | PR 07 |
-| TD-002 | `getCityById` suspend overhead in observe chain | PR 05 |
-| TD-003 | Replace deprecated `HelpOutline` with `AutoMirrored` | PR 06 |
-
----
-
 ## Index
 
 | ID | Title | Severity | Target | Status |
@@ -92,3 +127,4 @@ Replaced `Icons.Filled.HelpOutline` with `Icons.AutoMirrored.Filled.HelpOutline`
 | TD-001 | Data source classes should be interfaces | Low | PR 07 | Resolved |
 | TD-002 | `getCityById` suspend overhead in observe chain | Low | PR 05 | Resolved |
 | TD-003 | Replace deprecated `HelpOutline` with `AutoMirrored` | Low | PR 06 | Resolved |
+| TD-004 | `LocationProvider.lastLocation` has no staleness check | Low | TBD | Open |

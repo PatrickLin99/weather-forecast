@@ -113,23 +113,20 @@ See `docs/MODULE_STRUCTURE.md` for detailed package structure of each module.
 
 ### PR strategy
 
-| PR | Scope | Emulator result | Status |
-|----|-------|-----------------|-------|
-| 01 | Scaffolding: build-logic, version catalog, empty module skeleton | Hello Compose (AS default) | ✅ |
-| 02 | Core foundations: model, common, network, database, datastore, designsystem | Hello Compose (no UI change) | ✅ |
-| 03 | First vertical: domain, data, feature:weather (Taipei hardcoded, no location yet) | First real weather screen | ✅ |
-| 04 | feature:citylist + search + city switching | Switch cities | ✅ |
-| 05 | core:location + geocoding integration | Auto-detect current location | ✅ |
-| 06 | Polish: pull-to-refresh, °C/°F toggle, refined error UX | Full UX | ✅ |
-| 07 | Tests + README + AI_USAGE.md | Final deliverable | ✅ |
+| PR | Scope | Status |
+|----|-------|--------|
+| 01 | Scaffolding: build-logic, version catalog, empty module skeleton | ✅ |
+| 02 | Core foundations: model, common, network, database, datastore, designsystem | ✅ |
+| 03 | First vertical: domain, data, feature:weather (Taipei hardcoded, no location yet) | ✅ |
+| 04 | feature:citylist + search + city switching | ✅ |
+| 05 | core:location + geocoding integration | ✅ |
+| 06 | Polish: pull-to-refresh, °C/°F toggle, refined error UX | ✅ |
+| 07 | Tests + README + AI_USAGE.md | ✅ |
+| 08 | Post-delivery hotfix: 3 bugs from final regression + UX refinements | ✅ |
 
-### Current PR
+### Project status
 
-**PR #07 — Tests, Documentation, and Delivery** ⏳ in progress
-- Branch: `feat/07-tests-and-delivery`
-- Scope: TD-001 refactor (data source interfaces), critical-path tests, README.md, AI_USAGE.md, final regression.
-- Spec: see `docs/prs/PR07_TESTS_AND_DELIVERY.md`
-- Execution: 3-stage with checkpoints.
+**Complete.** All 8 PRs merged into `main`.
 
 ### Definition of Done (per PR)
 
@@ -165,7 +162,7 @@ When I ask you to work on this project:
    and comments stay in English.
 
 7. **Test files are optional per PR.** If the scope naturally includes testable units
-   (Repository, UseCase, ViewModel), including tests is welcome. PR #07 serves as the
+   (Repository, UseCase, ViewModel), including tests is welcome. PR #07 served as the
    catch-all to ensure comprehensive test coverage by the end.
 
 8. **Flag version changes before applying.** If a build error or compatibility

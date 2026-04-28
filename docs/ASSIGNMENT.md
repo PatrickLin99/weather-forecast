@@ -83,19 +83,19 @@ This section tracks our approach and completion status. Keep it honest and up-to
 
 | Requirement | Our approach | Status |
 |-------------|--------------|--------|
-| Current-day forecast | `:feature:weather` displays current temperature, feels-like, humidity, wind, condition | ⏳ PR 03 |
-| Weekly forecast | 7-day list in the same screen, via Open-Meteo `daily` endpoint | ⏳ PR 03 |
-| City list + selection | `:feature:citylist` with search (Open-Meteo geocoding), saved cities, tap-to-switch | ⏳ PR 04 |
+| Current-day forecast | `:feature:weather` displays current temperature, feels-like, humidity, wind, condition | ✅ Done (PR 03) |
+| Weekly forecast | 7-day list in the same screen, via Open-Meteo `daily` endpoint | ✅ Done (PR 03) |
+| City list + selection | `:feature:citylist` with search (Open-Meteo geocoding), saved cities, tap-to-switch | ✅ Done (PR 04) |
 
 ### Technical requirements
 
 | Requirement | Our approach | Status |
 |-------------|--------------|--------|
-| Kotlin | Sole implementation language | ⏳ All PRs |
-| Coroutines | Used throughout; Flow for reactive streams; suspend for one-shot | ⏳ All PRs |
-| Jetpack Compose | All UI in Compose; Material 3 | ⏳ PR 02–06 |
-| Clean Architecture | Three-layer separation enforced by module boundaries (see `docs/ARCHITECTURE.md`) | ⏳ PR 02–03 |
-| At least one feature module | We have two: `:feature:weather`, `:feature:citylist` | ⏳ PR 03–04 |
+| Kotlin | Sole implementation language | ✅ Done |
+| Coroutines | Used throughout; Flow for reactive streams; suspend for one-shot | ✅ Done |
+| Jetpack Compose | All UI in Compose; Material 3 | ✅ Done |
+| Clean Architecture | Three-layer separation enforced by module boundaries (see `docs/ARCHITECTURE.md`) | ✅ Done |
+| At least one feature module | We have two: `:feature:weather`, `:feature:citylist` | ✅ Done |
 
 ### API
 
@@ -107,9 +107,9 @@ This section tracks our approach and completion status. Keep it honest and up-to
 
 | Requirement | Our approach | Status |
 |-------------|--------------|--------|
-| 100% executable | Verified in PR 07 DoD: fresh clone → `./gradlew build` → app runs. No API key setup needed. | ⏳ PR 07 |
-| Public GitHub repo | Hosted under personal GitHub account | ⏳ Pre-delivery |
-| AI usage document | `AI_USAGE.md` generated in PR 07, covering design discussions, document generation, and per-PR code generation | ⏳ PR 07 |
+| 100% executable | Verified: fresh clone → `./gradlew build` → app runs. No API key setup needed. | ✅ Done |
+| Public GitHub repo | Hosted under personal GitHub account | ✅ Done |
+| AI usage document | `AI_USAGE.md` at repo root, covering design discussions, document generation, and per-PR code generation | ✅ Done (PR 07) |
 
 ---
 
@@ -118,29 +118,29 @@ This section tracks our approach and completion status. Keep it honest and up-to
 Run through this list before submitting. Every item must be checked.
 
 ### Functional
-- [ ] App launches without crash on a fresh install
-- [ ] Current-day weather is displayed (temperature, condition, additional details)
-- [ ] Weekly (7-day) forecast is displayed
-- [ ] City list is accessible
-- [ ] Cities can be searched and added to the list
-- [ ] Selected city's weather appears on the main screen
-- [ ] Switching cities works and persists across restarts
+- [x] App launches without crash on a fresh install
+- [x] Current-day weather is displayed (temperature, condition, additional details)
+- [x] Weekly (7-day) forecast is displayed
+- [x] City list is accessible
+- [x] Cities can be searched and added to the list
+- [x] Selected city's weather appears on the main screen
+- [x] Switching cities works and persists across restarts
 
 ### Technical
-- [ ] Written in Kotlin (no Java)
-- [ ] Coroutines used (no blocking IO on main thread)
-- [ ] UI in Jetpack Compose (no XML layouts in app code)
-- [ ] Clean Architecture: domain layer has no Android/network/database imports
-- [ ] At least one feature module (we have two): `:feature:weather`, `:feature:citylist`
+- [x] Written in Kotlin (no Java)
+- [x] Coroutines used (no blocking IO on main thread)
+- [x] UI in Jetpack Compose (no XML layouts in app code)
+- [x] Clean Architecture: domain layer has no Android/network/database imports
+- [x] At least one feature module (we have two): `:feature:weather`, `:feature:citylist`
 
 ### Delivery
-- [ ] Repo is **public** on GitHub (not private, not restricted, not organization-locked)
-- [ ] Fresh clone + `./gradlew assembleDebug` succeeds on any machine with Android SDK
-- [ ] No `local.properties` or secrets required — app runs out of the box
-- [ ] `README.md` exists and includes: screenshots, how to run, architecture summary
-- [ ] `AI_USAGE.md` exists at the repo root and is substantive
-- [ ] All PRs merged into `main`
-- [ ] `main` branch is the delivered state
+- [x] Repo is **public** on GitHub (not private, not restricted, not organization-locked)
+- [x] Fresh clone + `./gradlew assembleDebug` succeeds on any machine with Android SDK
+- [x] No `local.properties` or secrets required — app runs out of the box
+- [x] `README.md` exists and includes: how to run, architecture summary, screenshots
+- [x] `AI_USAGE.md` exists at the repo root and is substantive
+- [x] All PRs merged into `main`
+- [x] `main` branch is the delivered state
 
 ---
 

@@ -128,4 +128,10 @@ WeatherForecast/
 This app uses [Open-Meteo](https://open-meteo.com/) — free, no API key required.
 
 - Forecast: `https://api.open-meteo.com/v1/forecast`
-- Geocoding: `https://geocoding-api.open-meteo.com/v1/search`
+- Geocoding: `https://geocoding-api.open-meteo.com/v1/search
+
+## Screenshots
+
+| Weather | City List | Search | Permission |
+|---|---|---|---|
+| ![Weather](docs/screenshots/01-weather.png) | ![CityList](docs/screenshots/02-citylist.png) | ![Search](docs/screenshots/03-search.png) | ![Permission](docs/screenshots/04-permission.png) |`
