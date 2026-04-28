@@ -24,6 +24,7 @@ import com.example.weatherforecast.feature.weather.R
 @Composable
 internal fun LocationPermissionBanner(
     onTap: () -> Unit,
+    needsSettingsRedirect: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -43,7 +44,10 @@ internal fun LocationPermissionBanner(
             )
             Spacer(Modifier.width(12.dp))
             Text(
-                text = stringResource(R.string.weather_banner_location_permission),
+                text = stringResource(
+                    if (needsSettingsRedirect) R.string.weather_banner_open_settings
+                    else R.string.weather_banner_location_permission,
+                ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
             )

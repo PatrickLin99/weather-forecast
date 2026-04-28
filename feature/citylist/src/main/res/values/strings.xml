@@ -1,6 +1,7 @@
 <resources>
     <string name="citylist_title">Cities</string>
-    <string name="citylist_search_placeholder">Search cities</string>
+    <string name="citylist_search_placeholder">Taipei</string>
+    <string name="citylist_search_hint">Search in English</string>
     <string name="citylist_search_no_matches">No matches</string>
     <string name="citylist_search_failed">Search failed. Try again.</string>
     <string name="citylist_empty_hint">Search above to add a city</string>

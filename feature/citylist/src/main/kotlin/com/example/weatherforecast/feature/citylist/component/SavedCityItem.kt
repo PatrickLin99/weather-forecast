@@ -30,6 +30,7 @@ internal fun SavedCityItem(
     isSelected: Boolean,
     onTap: () -> Unit,
     onDelete: () -> Unit,
+    isDefault: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     ListItem(
@@ -58,11 +59,13 @@ internal fun SavedCityItem(
             }
         },
         trailingContent = {
-            IconButton(onClick = onDelete) {
-                Icon(
-                    Icons.Filled.Delete,
-                    contentDescription = stringResource(R.string.citylist_action_delete),
-                )
+            if (!isDefault) {
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        Icons.Filled.Delete,
+                        contentDescription = stringResource(R.string.citylist_action_delete),
+                    )
+                }
             }
         },
     )

@@ -105,20 +105,25 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
+    private var hasReceivedFirstPermissionState = false
+
     fun onLocationPermissionChanged(granted: Boolean, locationEnabled: Boolean) {
         val wasUsable = _hasLocationPermission.value && _isLocationEnabled.value
         _hasLocationPermission.value = granted
         _isLocationEnabled.value = locationEnabled
         val nowUsable = granted && locationEnabled
-        // Only resolve when transitioning from non-usable to usable. This avoids
-        // redundant resolves on every WeatherScreen re-entry (e.g. back from CityList).
-        if (nowUsable && !wasUsable) {
+
+        // First permission state received after ViewModel creation: always re-resolve if
+        // usable. This handles the cold-start case where permission is already granted and
+        // the device location may have changed since last launch.
+        val isFirstReceived = !hasReceivedFirstPermissionState
+        hasReceivedFirstPermissionState = true
+
+        val shouldReResolve = nowUsable && (isFirstReceived || !wasUsable)
+        if (shouldReResolve) {
             viewModelScope.launch {
                 try {
                     resolveInitialCity(useLocation = true)
-                    // No manual refresh needed: resolveInitialCity upserts the
-                    // current_location row, which triggers observeSavedCities() → the
-                    // observe chain re-emits the updated City → init collect fires refresh.
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Throwable) {

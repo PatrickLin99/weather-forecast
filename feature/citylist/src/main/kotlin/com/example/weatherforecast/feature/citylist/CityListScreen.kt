@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.weatherforecast.core.common.constant.DefaultCity
 import com.example.weatherforecast.core.model.City
 import com.example.weatherforecast.feature.citylist.component.CitySearchBar
 import com.example.weatherforecast.feature.citylist.component.EmptySavedListHint
@@ -140,6 +141,7 @@ private fun SavedCitiesList(
                 isSelected = city.id == selectedCityId,
                 onTap = { onTap(city) },
                 onDelete = { onDelete(city.id) },
+                isDefault = city.id == DefaultCity.TAIPEI.id,
             )
         }
     }

@@ -37,7 +37,9 @@ import com.example.weatherforecast.feature.weather.component.LocationDisabledBan
 import com.example.weatherforecast.feature.weather.component.LocationPermissionBanner
 import com.example.weatherforecast.feature.weather.component.StaleDataBanner
 import com.example.weatherforecast.feature.weather.component.WeatherDetailsRow
+import android.net.Uri
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 
@@ -69,11 +71,27 @@ fun WeatherScreen(
         )
     }
 
+    val needsSettingsRedirect = permissionState.status.let {
+        it is PermissionStatus.Denied && !it.shouldShowRationale
+    }
+
     WeatherContent(
         uiState = uiState,
         locationPromptState = locationPromptState,
         isRefreshing = isRefreshing,
-        onRequestPermission = { permissionState.launchPermissionRequest() },
+        needsSettingsRedirect = needsSettingsRedirect,
+        onRequestPermission = {
+            if (needsSettingsRedirect) {
+                context.startActivity(
+                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", context.packageName, null)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    },
+                )
+            } else {
+                permissionState.launchPermissionRequest()
+            }
+        },
         onOpenLocationSettings = {
             context.startActivity(
                 Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
@@ -100,6 +118,7 @@ internal fun WeatherContent(
     onRefresh: () -> Unit,
     onToggleUnit: () -> Unit,
     onNavigateToCityList: () -> Unit,
+    needsSettingsRedirect: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -110,7 +129,7 @@ internal fun WeatherContent(
                     when (uiState) {
                         is WeatherUiState.Success -> Text(
                             text = uiState.city.name,
-                            modifier = Modifier.clickable { onNavigateToCityList() },
+//                            modifier = Modifier.clickable { onNavigateToCityList() },
                         )
                         else -> Text(stringResource(R.string.weather_title_default))
                     }
@@ -141,6 +160,7 @@ internal fun WeatherContent(
             when (locationPromptState) {
                 LocationPromptState.NeedsPermission -> LocationPermissionBanner(
                     onTap = onRequestPermission,
+                    needsSettingsRedirect = needsSettingsRedirect,
                 )
                 LocationPromptState.LocationDisabled -> LocationDisabledBanner(
                     onOpenSettings = onOpenLocationSettings,
