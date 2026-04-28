@@ -121,7 +121,7 @@ See `docs/MODULE_STRUCTURE.md` for detailed package structure of each module.
 | 04 | feature:citylist + search + city switching | Switch cities | ✅ |
 | 05 | core:location + geocoding integration | Auto-detect current location | ✅ |
 | 06 | Polish: pull-to-refresh, °C/°F toggle, refined error UX | Full UX | ✅ |
-| 07 | Tests + README + AI_USAGE.md | Final deliverable | ⏳ |
+| 07 | Tests + README + AI_USAGE.md | Final deliverable | ✅ |
 
 ### Current PR
 

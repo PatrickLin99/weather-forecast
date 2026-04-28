@@ -129,7 +129,7 @@ internal fun WeatherContent(
                     when (uiState) {
                         is WeatherUiState.Success -> Text(
                             text = uiState.city.name,
-                            modifier = Modifier.clickable { onNavigateToCityList() },
+//                            modifier = Modifier.clickable { onNavigateToCityList() },
                         )
                         else -> Text(stringResource(R.string.weather_title_default))
                     }
