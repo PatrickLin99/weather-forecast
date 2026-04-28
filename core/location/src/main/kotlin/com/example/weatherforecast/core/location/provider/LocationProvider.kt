@@ -56,7 +56,14 @@ class LocationProvider @Inject internal constructor(
 
         if (location == null) {
             cts.cancel()
-            return@withContext Result.Failure(AppError.LocationTimeout)
+            // Fresh fix timed out. Fall back to FLP's last known location — still more
+            // current than a cached city row from a previous launch.
+            val last = try { fusedClient.lastLocation.await() } catch (_: SecurityException) { null }
+            return@withContext if (last != null) {
+                Result.Success(Coordinates(last.latitude, last.longitude))
+            } else {
+                Result.Failure(AppError.LocationTimeout)
+            }
         }
 
         Result.Success(Coordinates(location.latitude, location.longitude))
