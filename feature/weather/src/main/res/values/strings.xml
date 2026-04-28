@@ -9,6 +9,7 @@
     <string name="weather_unit_celsius">°C</string>
     <string name="weather_unit_fahrenheit">°F</string>
     <string name="weather_banner_location_permission">Enable location for auto-detect</string>
+    <string name="weather_banner_open_settings">Open Settings to enable location</string>
     <string name="weather_banner_location_disabled">Location is off — tap to enable in Settings</string>
 
     <string name="error_no_network">No internet connection</string>
