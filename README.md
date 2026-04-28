@@ -1,4 +1,4 @@
-# Weather Forecast
+**# Weather Forecast
 
 An Android weather app demonstrating modern Android architecture: Kotlin, Coroutines, Jetpack Compose, Clean Architecture, multi-module Gradle setup, and full SSOT data flow.
 
@@ -128,10 +128,10 @@ WeatherForecast/
 This app uses [Open-Meteo](https://open-meteo.com/) — free, no API key required.
 
 - Forecast: `https://api.open-meteo.com/v1/forecast`
-- Geocoding: `https://geocoding-api.open-meteo.com/v1/search
+- Geocoding: `https://geocoding-api.open-meteo.com/v1/search`
 
 ## Screenshots
 
 | Weather | City List | Search | Permission |
 |---|---|---|---|
-| ![Weather](docs/screenshots/01-weather.png) | ![CityList](docs/screenshots/02-citylist.png) | ![Search](docs/screenshots/03-search.png) | ![Permission](docs/screenshots/04-permission.png) |`
+| <img src="docs/screenshots/01-weather.png" width="200"/> | <img src="docs/screenshots/02-citylist.png" width="200"/> | <img src="docs/screenshots/03-search.png" width="200"/> | <img src="docs/screenshots/04-permission.png" width="200"/> |**
